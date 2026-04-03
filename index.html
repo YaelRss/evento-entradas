@@ -480,26 +480,26 @@
                 </div>
             </div>
 
-            <form class="ticket-form" id="purchaseForm" onsubmit="handlePurchase(event)">
+            <form class="ticket-form" id="purchaseForm">
                 <div class="form-group">
                     <label for="fullName">Nombre Completo</label>
-                    <input type="text" id="fullName" placeholder="Tu nombre" required>
+                    <input type="text" id="fullName" placeholder="Tu nombre">
                 </div>
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="tu@correo.com" required>
+                    <input type="email" id="email" placeholder="tu@correo.com">
                 </div>
                 <div class="form-group">
                     <label for="quantity">Cantidad de Boletos ($250 MXN c/u)</label>
-                    <select id="quantity" required>
+                    <select id="quantity">
                         <option value="1">1 Boleto - $250 MXN</option>
                         <option value="2">2 Boletos - $500 MXN</option>
                         <option value="3">3 Boletos - $750 MXN</option>
                         <option value="4">4 Boletos - $1000 MXN</option>
                         <option value="5">5 Boletos - $1250 MXN</option>
                     </select>
-                </div>
-                <button type="submit" class="cta-button buy-btn" id="submitBtn">Finalizar Compra</button>
+                <div id="form-error" style="color: #ff4444; font-size: 0.9rem; margin-bottom: 1rem; display: none; font-weight: bold; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; border: 1px solid #ff4444;"></div>
+                <button type="button" class="cta-button buy-btn" id="submitBtn" onclick="handlePurchase(event)">Finalizar Compra</button>
             </form>
         </div>
     </div>
@@ -529,9 +529,16 @@
 
     <script>
         // Inicializar Supabase (Credenciales Temporales - REEMPLAZAR CON LAS REALES)
-        const supabaseUrl = 'https://kefumnhetasvwhfkgmab.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZnVtbmhldGFzdndoZmtnbWFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE4MzUsImV4cCI6MjA5MDgxNzgzNX0.5VCYnoiT2hOMt6L5TLoRn6Xq1NleQ8-uzEN1WxitVZQ';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        let dbClient = null;
+        try {
+            const supabaseUrl = 'https://kefumnhetasvwhfkgmab.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZnVtbmhldGFzdndoZmtnbWFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE4MzUsImV4cCI6MjA5MDgxNzgzNX0.5VCYnoiT2hOMt6L5TLoRn6Xq1NleQ8-uzEN1WxitVZQ';
+            if (window.supabase) {
+                dbClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+            }
+        } catch(err) {
+            console.error("Supabase error de inicialización:", err);
+        }
 
         const MAX_TICKETS = 1200;
 
@@ -558,7 +565,8 @@
         }
 
         async function updateTicketDisplay() {
-            const { count, error } = await supabase
+            if (!dbClient) return;
+            const { count, error } = await dbClient
                 .from('tickets')
                 .select('*', { count: 'exact', head: true });
 
@@ -574,34 +582,51 @@
         }
 
         // Escuchar cambios en base de datos en tiempo real para actualizar contador visual a todos los usuarios
-        supabase.channel('public:tickets')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'tickets' }, payload => {
-                updateTicketDisplay();
-            })
-            .subscribe();
+        if (dbClient) {
+            dbClient.channel('public:tickets')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'tickets' }, payload => {
+                    updateTicketDisplay();
+                })
+                .subscribe();
+        }
 
         async function handlePurchase(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const errorDiv = document.getElementById('form-error');
+            errorDiv.style.display = 'none';
+
+            const qty = parseInt(document.getElementById('quantity').value);
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!dbClient) {
+                errorDiv.textContent = "⚠ Sistema bloqueado. Desactiva los escudos de Brave o tu AdBlocker.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!name || !email) {
+                errorDiv.textContent = "⚠ Por favor, completa tu nombre y correo.";
+                errorDiv.style.display = 'block';
+                return;
+            }
 
             try {
-                const qty = parseInt(document.getElementById('quantity').value);
-                const name = document.getElementById('fullName').value;
-                const email = document.getElementById('email').value;
-
                 btn.textContent = 'Procesando...';
                 btn.style.opacity = '0.7';
                 btn.disabled = true;
 
                 // Validación rápida de límite
-                const { count, error: countError } = await supabase.from('tickets').select('*', { count: 'exact', head: true });
-
+                const { count, error: countError } = await dbClient.from('tickets').select('*', { count: 'exact', head: true });
+                
                 if (countError) {
-                    throw new Error("No se pudo conectar a la tabla de boletos. Revisa Supabase: " + countError.message);
+                    throw new Error("Revisa tu BD: " + countError.message);
                 }
-
+                
                 if (count + qty > MAX_TICKETS) {
-                    alert('Lo sentimos, no hay suficientes boletos disponibles para esta cantidad.');
+                    errorDiv.textContent = "Lo sentimos, no hay suficientes boletos disponibles.";
+                    errorDiv.style.display = 'block';
                     resetButton(btn);
                     return;
                 }
@@ -613,22 +638,33 @@
                 }
 
                 // Insertar en Supabase
-                const { data, error } = await supabase
+                const { data, error } = await dbClient
                     .from('tickets')
                     .insert(ticketsToInsert)
-                    .select();
+                    .select(); 
 
                 if (error) {
-                    throw new Error("No se pudieron generar los boletos: " + error.message);
+                    throw new Error("Error insertando: " + error.message);
                 }
 
-                // Generar la interfaz para mostrar los QRs
+                // Llamar en el fondo a nuestra Netlify Function para enviar el correo (no bloquea la UI)
+                fetch('/.netlify/functions/sendTicket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticketArray: data })
+                }).then(res => res.json()).then(result => console.log('Envío correo:', result))
+                  .catch(err => console.error("Error al pedir envío de correo:", err));
+
+                // Generar la interfaz web inmediatamente
                 showQRTickets(data);
-                e.target.reset();
+                
+                // Reiniciar el formulario
+                document.getElementById('purchaseForm').reset();
                 resetButton(btn);
             } catch (err) {
                 console.error("Excepción en handlePurchase:", err);
-                alert("✖ ERROR: " + err.message);
+                errorDiv.textContent = "✖ ERROR: " + err.message;
+                errorDiv.style.display = 'block';
                 resetButton(btn);
             }
         }
@@ -665,48 +701,47 @@
             tickets.forEach(ticket => {
                 const ticketCard = document.createElement('div');
 
-                // --- Diseño premium (Flyer/Boleto Digital) ---
+                // --- Diseño con Flyer Real ---
                 ticketCard.style = `
-                    background: linear-gradient(145deg, #181a20, #0d0e12);
+                    background: #111 url('flyer.jpg') no-repeat center center;
+                    background-size: cover;
                     border: 1px solid rgba(255, 90, 85, 0.4);
                     border-radius: 15px;
                     color: #fff;
                     text-align: center;
-                    width: 300px;
+                    width: 330px;
+                    height: 520px;
                     overflow: hidden;
                     box-shadow: 0 15px 35px rgba(255, 90, 85, 0.2);
                     position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end; /* Mantener QR abajo */
                 `;
 
-                // Cabecera del boleto
-                const header = document.createElement('div');
-                header.style = 'background: linear-gradient(90deg, var(--accent-fire), #ff2a25); padding: 1rem; border-bottom: 2px dashed rgba(255,255,255,0.3);';
-                header.innerHTML = `<h3 style="margin:0; font-family: 'Anton', sans-serif; font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Derramamiento</h3> <p style="margin: 5px 0 0 0; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">Acceso General</p>`;
-                ticketCard.appendChild(header);
-
-                // Cuello del boleto (Sección principal)
-                const bodyDiv = document.createElement('div');
-                bodyDiv.style = 'padding: 2rem 1.5rem; background: radial-gradient(circle at center, rgba(59, 139, 143, 0.15) 0%, transparent 80%);';
+                // Overlay oscuro degradado en la parte inferior para hacer legible el QR y datos
+                const overlay = document.createElement('div');
+                overlay.style = 'background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0) 100%); padding: 2rem 1.5rem 1.5rem 1.5rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;';
 
                 // Mostrar Número de Serie
                 const serial = document.createElement('div');
-                serial.innerHTML = `<span style="color: var(--accent-teal); font-weight: 700; font-size: 1.2rem; letter-spacing: 2px;">BOLETO N° ${String(ticket.serial_number).padStart(4, '0')}</span>`;
-                serial.style = 'margin-bottom: 1.5rem; padding-bottom: 1rem;';
-                bodyDiv.appendChild(serial);
+                serial.innerHTML = `<span style="color: #fff; font-weight: 700; font-size: 1.2rem; letter-spacing: 2px;">BOLETO N° ${String(ticket.serial_number).padStart(4, '0')}</span>`;
+                serial.style = 'margin-bottom: 1rem;';
+                overlay.appendChild(serial);
 
                 // Contenedor blanco para el QR para asegurar que pueda escanearse independientemente del fondo oscuro
                 const qrBorder = document.createElement('div');
-                qrBorder.style = 'background: #fff; padding: 12px; border-radius: 12px; display: inline-block; margin-bottom: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+                qrBorder.style = 'background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
 
                 const qrDiv = document.createElement('div');
                 qrBorder.appendChild(qrDiv);
-                bodyDiv.appendChild(qrBorder);
+                overlay.appendChild(qrBorder);
 
                 // Generar el código QR con el UUID secreto
                 new QRCode(qrDiv, {
                     text: ticket.id,
-                    width: 160,
-                    height: 160,
+                    width: 140,
+                    height: 140,
                     colorDark: "#050505",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
@@ -714,11 +749,11 @@
 
                 // Datos del titular
                 const owner = document.createElement('p');
-                owner.innerHTML = `<span style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Titular del pase</span><br><strong style="font-size: 1.2rem; color: #fff; text-transform: uppercase;">${ticket.owner_name}</strong>`;
-                owner.style = 'margin-top: 0.5rem; line-height: 1.4;';
-                bodyDiv.appendChild(owner);
+                owner.innerHTML = `<span style="font-size: 0.75rem; color: #ccc; text-transform: uppercase;">Titular</span><br><strong style="font-size: 1.1rem; color: var(--accent-fire); text-transform: uppercase;">${ticket.owner_name}</strong>`;
+                owner.style = 'line-height: 1.2; margin: 0;';
+                overlay.appendChild(owner);
 
-                ticketCard.appendChild(bodyDiv);
+                ticketCard.appendChild(overlay);
                 wrapper.appendChild(ticketCard);
             });
         }
