@@ -582,46 +582,55 @@
 
         async function handlePurchase(e) {
             e.preventDefault();
-            const qty = parseInt(document.getElementById('quantity').value);
-            const name = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
             const btn = document.getElementById('submitBtn');
 
-            btn.textContent = 'Procesando...';
-            btn.style.opacity = '0.7';
-            btn.disabled = true;
+            try {
+                const qty = parseInt(document.getElementById('quantity').value);
+                const name = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
 
-            // Validación rápida de límite
-            const { count } = await supabase.from('tickets').select('*', { count: 'exact', head: true });
-            if (count + qty > MAX_TICKETS) {
-                alert('Lo sentimos, no hay suficientes boletos disponibles para esta cantidad.');
+                btn.textContent = 'Procesando...';
+                btn.style.opacity = '0.7';
+                btn.disabled = true;
+
+                // Validación rápida de límite
+                const { count, error: countError } = await supabase.from('tickets').select('*', { count: 'exact', head: true });
+
+                if (countError) {
+                    throw new Error("No se pudo conectar a la tabla de boletos. Revisa Supabase: " + countError.message);
+                }
+
+                if (count + qty > MAX_TICKETS) {
+                    alert('Lo sentimos, no hay suficientes boletos disponibles para esta cantidad.');
+                    resetButton(btn);
+                    return;
+                }
+
+                // Preparar el array de boletos a insertar
+                const ticketsToInsert = [];
+                for (let i = 0; i < qty; i++) {
+                    ticketsToInsert.push({ owner_name: name, owner_email: email, used: false });
+                }
+
+                // Insertar en Supabase
+                const { data, error } = await supabase
+                    .from('tickets')
+                    .insert(ticketsToInsert)
+                    .select();
+
+                if (error) {
+                    throw new Error("No se pudieron generar los boletos: " + error.message);
+                }
+
+                // Generar la interfaz para mostrar los QRs
+                showQRTickets(data);
+                e.target.reset();
                 resetButton(btn);
-                return;
-            }
-
-            // Preparar el array de boletos a insertar
-            const ticketsToInsert = [];
-            for (let i = 0; i < qty; i++) {
-                ticketsToInsert.push({ owner_name: name, owner_email: email, used: false });
-            }
-
-            // Insertar en Supabase
-            const { data, error } = await supabase
-                .from('tickets')
-                .insert(ticketsToInsert)
-                .select(); // El .select() es crucial para devolver el ID UUID y el número de serie (serial_number) que asigna la BD
-
-            if (error) {
-                console.error("Error comprando boleto:", error);
-                alert("Hubo un error de conexión con la base de datos.");
+            } catch (err) {
+                console.error("Excepción en handlePurchase:", err);
+                alert("✖ ERROR: " + err.message);
                 resetButton(btn);
-                return;
             }
-
-            // Generar la interfaz para mostrar los QRs
-            showQRTickets(data);
-            e.target.reset();
-            resetButton(btn);
         }
 
         function resetButton(btn) {
@@ -655,32 +664,61 @@
             const wrapper = document.getElementById('qrs-wrapper');
             tickets.forEach(ticket => {
                 const ticketCard = document.createElement('div');
-                ticketCard.style = 'background: #fff; padding: 1.5rem; border-radius: 10px; color: #000; text-align: center; width: 250px;';
 
-                const title = document.createElement('h3');
-                title.textContent = `Boleto N° ${ticket.serial_number}`;
-                title.style = 'margin-bottom: 1rem; font-family: Anton, sans-serif; letter-spacing: 1px; color: #111; font-size: 1.5rem; text-transform: uppercase;';
-                ticketCard.appendChild(title);
+                // --- Diseño premium (Flyer/Boleto Digital) ---
+                ticketCard.style = `
+                    background: linear-gradient(145deg, #181a20, #0d0e12);
+                    border: 1px solid rgba(255, 90, 85, 0.4);
+                    border-radius: 15px;
+                    color: #fff;
+                    text-align: center;
+                    width: 300px;
+                    overflow: hidden;
+                    box-shadow: 0 15px 35px rgba(255, 90, 85, 0.2);
+                    position: relative;
+                `;
+
+                // Cabecera del boleto
+                const header = document.createElement('div');
+                header.style = 'background: linear-gradient(90deg, var(--accent-fire), #ff2a25); padding: 1rem; border-bottom: 2px dashed rgba(255,255,255,0.3);';
+                header.innerHTML = `<h3 style="margin:0; font-family: 'Anton', sans-serif; font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Derramamiento</h3> <p style="margin: 5px 0 0 0; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">Acceso General</p>`;
+                ticketCard.appendChild(header);
+
+                // Cuello del boleto (Sección principal)
+                const bodyDiv = document.createElement('div');
+                bodyDiv.style = 'padding: 2rem 1.5rem; background: radial-gradient(circle at center, rgba(59, 139, 143, 0.15) 0%, transparent 80%);';
+
+                // Mostrar Número de Serie
+                const serial = document.createElement('div');
+                serial.innerHTML = `<span style="color: var(--accent-teal); font-weight: 700; font-size: 1.2rem; letter-spacing: 2px;">BOLETO N° ${String(ticket.serial_number).padStart(4, '0')}</span>`;
+                serial.style = 'margin-bottom: 1.5rem; padding-bottom: 1rem;';
+                bodyDiv.appendChild(serial);
+
+                // Contenedor blanco para el QR para asegurar que pueda escanearse independientemente del fondo oscuro
+                const qrBorder = document.createElement('div');
+                qrBorder.style = 'background: #fff; padding: 12px; border-radius: 12px; display: inline-block; margin-bottom: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
 
                 const qrDiv = document.createElement('div');
-                qrDiv.style = 'display: flex; justify-content: center; margin-bottom: 1rem;';
-                ticketCard.appendChild(qrDiv);
+                qrBorder.appendChild(qrDiv);
+                bodyDiv.appendChild(qrBorder);
 
-                // Generar el código QR con el "id" (El UUID secreto)
+                // Generar el código QR con el UUID secreto
                 new QRCode(qrDiv, {
                     text: ticket.id,
-                    width: 180,
-                    height: 180,
-                    colorDark: "#000000",
+                    width: 160,
+                    height: 160,
+                    colorDark: "#050505",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
                 });
 
+                // Datos del titular
                 const owner = document.createElement('p');
-                owner.textContent = `A nombre de: ${ticket.owner_name}`;
-                owner.style = 'font-weight: bold; font-size: 0.85rem; margin-top: 0.5rem;';
-                ticketCard.appendChild(owner);
+                owner.innerHTML = `<span style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Titular del pase</span><br><strong style="font-size: 1.2rem; color: #fff; text-transform: uppercase;">${ticket.owner_name}</strong>`;
+                owner.style = 'margin-top: 0.5rem; line-height: 1.4;';
+                bodyDiv.appendChild(owner);
 
+                ticketCard.appendChild(bodyDiv);
                 wrapper.appendChild(ticketCard);
             });
         }
