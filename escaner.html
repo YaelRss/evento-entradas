@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Boletos - IPUM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- HTML5 QRCode Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --text-color: #f4f4f0;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-yellow: #ffc107;
+            --accent-blue: #3b8b8f;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Anton', sans-serif;
+            color: var(--text-color);
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #1a1c23;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--accent-blue);
+            background: #000;
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #2a6a6d;
+        }
+
+        .status-valid {
+            background: rgba(40, 167, 69, 0.2);
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .status-used {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .status-invalid {
+            background: rgba(220, 53, 69, 0.2);
+            border: 2px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .ticket-details {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-top: 0.5rem;
+            font-weight: normal;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Escaner de Accesos</h1>
+    <p style="color: #888; margin-bottom: 2rem;">Staff IPUM</p>
+
+    <div class="container">
+        <div id="reader"></div>
+        <button id="startBtn" class="btn" onclick="startScanner()">Iniciar Cámara</button>
+
+        <div id="result-box">
+            <span id="result-title"></span>
+            <div id="result-details" class="ticket-details"></div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar Supabase (Reemplazar con las reales!)
+        const supabaseUrl = 'https://kefumnhetasvwhfkgmab.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZnVtbmhldGFzdndoZmtnbWFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE4MzUsImV4cCI6MjA5MDgxNzgzNX0.5VCYnoiT2hOMt6L5TLoRn6Xq1NleQ8-uzEN1WxitVZQ';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let html5QrcodeScanner;
+        let isProcessing = false;
+
+        function startScanner() {
+            document.getElementById('startBtn').style.display = 'none';
+
+            html5QrcodeScanner = new Html5Qrcode("reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+                .catch(err => {
+                    alert("Error al acceder a la cámara: " + err);
+                    document.getElementById('startBtn').style.display = 'block';
+                });
+        }
+
+        async function onScanSuccess(decodedText, decodedResult) {
+            if (isProcessing) return; // Evitar escaneos dobles rápidos
+            isProcessing = true;
+
+            // Pausar lector mientras verificamos
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.pause(true);
+            }
+
+            await verifyTicket(decodedText);
+        }
+
+        function onScanFailure(error) {
+            // Se ejecuta constantemente mientras enfoca, lo ignoramos
+        }
+
+        async function verifyTicket(ticketId) {
+            const box = document.getElementById('result-box');
+            const title = document.getElementById('result-title');
+            const details = document.getElementById('result-details');
+
+            box.style.display = 'block';
+            box.className = '';
+            title.textContent = 'Verificando en base de datos...';
+            details.innerHTML = '';
+
+            try {
+                // Prevenir que escaneen cualquier QR (debe ser un UUID válido para buscar en bd)
+                if (ticketId.length < 30) throw new Error("QR no es nuestro formato");
+
+                const { data, error } = await supabase
+                    .from('tickets')
+                    .select('*')
+                    .eq('id', ticketId)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Boleto no encontrado");
+                }
+
+                if (data.used === true) {
+                    box.classList.add('status-used');
+                    title.textContent = '❌ BOLETO YA UTILIZADO';
+                    details.innerHTML = `El boleto #${data.serial_number} ya fue ingresado anteriormente.<br>A nombre de: ${data.owner_name}`;
+                } else {
+                    // Marcar como usado
+                    const { error: updateError } = await supabase
+                        .from('tickets')
+                        .update({ used: true })
+                        .eq('id', ticketId);
+
+                    if (updateError) {
+                        box.classList.add('status-invalid');
+                        title.textContent = '⚠️ Error actualizando base de datos';
+                    } else {
+                        box.classList.add('status-valid');
+                        title.textContent = '✅ ACCESO AUTORIZADO';
+                        details.innerHTML = `Boleto N° ${data.serial_number}<br>A nombre de: <b>${data.owner_name}</b>`;
+                    }
+                }
+            } catch (err) {
+                box.classList.add('status-invalid');
+                title.textContent = '🚫 BOLETO INVÁLIDO';
+                details.innerHTML = 'Este código QR no pertenece a este evento o no está registrado.';
+            }
+
+            // Reactivar el escaner después de 4 segundos
+            setTimeout(() => {
+                box.style.display = 'none';
+                isProcessing = false;
+                if (html5QrcodeScanner) {
+                    html5QrcodeScanner.resume();
+                }
+            }, 4000);
+        }
+    </script>
+</body>
+
+</html>
