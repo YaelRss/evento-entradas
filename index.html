@@ -427,6 +427,18 @@
             .verse {
                 font-size: 0.7rem;
             }
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .info-grid {
+                gap: 1rem;
+            }
+        }
+        @media (max-width: 380px) {
+            h1.title {
+                font-size: 3.5rem;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -709,7 +721,8 @@
                     border-radius: 15px;
                     color: #fff;
                     text-align: center;
-                    width: 330px;
+                    width: 100%;
+                    max-width: 330px;
                     height: 520px;
                     overflow: hidden;
                     box-shadow: 0 15px 35px rgba(255, 90, 85, 0.2);
@@ -717,6 +730,7 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-end; /* Mantener QR abajo */
+                    margin: 0 auto;
                 `;
 
                 // Overlay oscuro degradado en la parte inferior para hacer legible el QR y datos
@@ -737,9 +751,10 @@
                 qrBorder.appendChild(qrDiv);
                 overlay.appendChild(qrBorder);
 
-                // Generar el código QR con el UUID secreto
+                // Generar el código QR con URL directa para validación automática
+                const scanUrl = `https://ticketsipum.netlify.app/escaner.html?id=${ticket.id}`;
                 new QRCode(qrDiv, {
-                    text: ticket.id,
+                    text: scanUrl,
                     width: 140,
                     height: 140,
                     colorDark: "#050505",

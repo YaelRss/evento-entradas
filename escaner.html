@@ -109,6 +109,18 @@
             margin-top: 0.5rem;
             font-weight: normal;
         }
+
+        @media (max-width: 450px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            body {
+                padding: 1rem 0.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -175,9 +187,14 @@
             title.textContent = 'Verificando en base de datos...';
             details.innerHTML = '';
 
+            // Si el texto es una URL (porque el QR nuevo trae la URL completa), extraer sólo el ID
+            if (ticketId.includes('?id=')) {
+                ticketId = ticketId.split('?id=')[1].split('&')[0];
+            }
+
             try {
                 // Prevenir que escaneen cualquier QR (debe ser un UUID válido para buscar en bd)
-                if (ticketId.length < 30) throw new Error("QR no es nuestro formato");
+                if (!ticketId || ticketId.length < 30) throw new Error("QR no es nuestro formato");
 
                 const { data, error } = await supabase
                     .from('tickets')
@@ -221,9 +238,24 @@
                 isProcessing = false;
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.resume();
+                } else {
+                    // Si entraron directo por URL y ya se validó, ofrecer abrir camara para el siguiente
+                    document.getElementById('startBtn').style.display = 'block';
                 }
             }, 4000);
         }
+
+        // Ejecutar revisión automática si el personal de staff escaneó el QR con la app de Cámara nativa del celular
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id) {
+                document.getElementById('startBtn').style.display = 'none';
+                verifyTicket(id);
+                // Limpiar la URL para evitar una validación repetida si el usuario recarga la página
+                window.history.replaceState(null, '', window.location.pathname);
+            }
+        });
     </script>
 </body>
 

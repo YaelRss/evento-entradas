@@ -28,7 +28,8 @@ exports.handler = async (event, context) => {
 
         // Generar el bloque visual HTML de los tickets
         const ticketsHtml = ticketArray.map(t => {
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${t.id}`;
+            const scanUrl = encodeURIComponent(`https://ticketsipum.netlify.app/escaner.html?id=${t.id}`);
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${scanUrl}`;
             const num = String(t.serial_number).padStart(4, '0');
             return `
                 <div style="border: 2px dashed #e11d48; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; background-color: #fce7f3; max-width: 350px; margin-left: auto; margin-right: auto;">
