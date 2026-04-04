@@ -751,10 +751,9 @@
                 qrBorder.appendChild(qrDiv);
                 overlay.appendChild(qrBorder);
 
-                // Generar el código QR con URL directa para validación automática
-                const scanUrl = `https://ticketsipum.netlify.app/escaner.html?id=${ticket.id}`;
+                // Generar el código QR con el UUID secreto (sólo para staff)
                 new QRCode(qrDiv, {
-                    text: scanUrl,
+                    text: ticket.id,
                     width: 140,
                     height: 140,
                     colorDark: "#050505",
