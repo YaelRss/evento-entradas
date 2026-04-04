@@ -31,6 +31,7 @@
             color: var(--text-color);
             overflow-x: hidden;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         /* Fondo animado */
@@ -89,7 +90,7 @@
 
         h1.title {
             font-family: 'Anton', sans-serif;
-            font-size: clamp(4rem, 12vw, 10rem);
+            font-size: clamp(2.5rem, 11vw, 10rem);
             line-height: 1;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -99,6 +100,8 @@
             transform: translateY(20px);
             animation: fadeUp 1s ease forwards 0.8s;
             text-shadow: 0 0 40px rgba(255, 90, 85, 0.3);
+            word-break: break-word;
+            padding: 0 0.5rem;
         }
 
         .verse {
@@ -233,11 +236,16 @@
 
         footer {
             text-align: center;
-            padding: 3rem 0;
-            font-size: 0.8rem;
+            padding: 3rem 2rem;
+            padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+            font-size: 0.85rem;
             letter-spacing: 2px;
-            color: #555;
+            color: #ccc;
             text-transform: uppercase;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .footer-links {
@@ -351,13 +359,11 @@
             backdrop-filter: blur(10px);
             border-top: 1px solid rgba(59, 139, 143, 0.5);
             padding: 1rem 2rem;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
             z-index: 2000;
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-            transform: translateY(100%);
-            animation: slideUp 0.5s ease forwards 1s;
         }
 
         .cookie-banner .cookie-text {
@@ -423,6 +429,12 @@
             }
         }
 
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 768px) {
             .verse {
                 font-size: 0.7rem;
@@ -435,9 +447,13 @@
                 gap: 1rem;
             }
         }
-        @media (max-width: 380px) {
+        @media (max-width: 480px) {
             h1.title {
-                font-size: 3.5rem;
+                font-size: clamp(2.2rem, 10vw, 3.5rem);
+                letter-spacing: 0;
+            }
+            .container {
+                padding: 0 1rem;
             }
         }
     </style>
@@ -478,6 +494,29 @@
         </div>
     </section>
 
+    <footer>
+        <p style="margin-bottom: 0.5rem;">A Dios sea la gloria</p>
+        <p style="font-size: 0.75rem; color: #888; margin-bottom: 1rem; text-transform: none; letter-spacing: normal;">
+            &copy; 2026 Evento de Jóvenes IPUM. Todos los derechos reservados.<br>
+            Creada por <a href="https://rssdeveloper.com" target="_blank" rel="noopener"
+                style="color: var(--accent-teal); text-decoration: none;">Rss Developer</a>
+        </p>
+        <div class="footer-links">
+            <a href="#">Aviso de Privacidad</a>
+            <a href="#">Política de Cookies</a>
+            <a href="#">Términos y Condiciones</a>
+        </div>
+    </footer>
+
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-text">
+            Utilizamos cookies propias y de terceros para mejorar nuestros servicios, personalizar tu experiencia y
+            analizar el tráfico de nuestro sitio web. Al continuar navegando, aceptas nuestra <a href="#">Política de
+                Cookies</a>.
+        </div>
+        <button class="cookie-btn" onclick="acceptCookies()">Aceptar Cookies</button>
+    </div>
+
     <div class="modal" id="ticketModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -514,29 +553,6 @@
                 <button type="button" class="cta-button buy-btn" id="submitBtn" onclick="handlePurchase(event)">Finalizar Compra</button>
             </form>
         </div>
-    </div>
-
-    <footer>
-        <p style="margin-bottom: 0.5rem;">A Dios sea la gloria</p>
-        <p style="font-size: 0.75rem; color: #888; margin-bottom: 1rem; text-transform: none; letter-spacing: normal;">
-            &copy; 2026 Evento de Jóvenes IPUM. Todos los derechos reservados.<br>
-            Creada por <a href="https://rssdeveloper.com" target="_blank" rel="noopener"
-                style="color: var(--accent-teal); text-decoration: none;">Rss Developer</a>
-        </p>
-        <div class="footer-links">
-            <a href="#">Aviso de Privacidad</a>
-            <a href="#">Política de Cookies</a>
-            <a href="#">Términos y Condiciones</a>
-        </div>
-    </footer>
-
-    <div class="cookie-banner" id="cookieBanner">
-        <div class="cookie-text">
-            Utilizamos cookies propias y de terceros para mejorar nuestros servicios, personalizar tu experiencia y
-            analizar el tráfico de nuestro sitio web. Al continuar navegando, aceptas nuestra <a href="#">Política de
-                Cookies</a>.
-        </div>
-        <button class="cookie-btn" onclick="acceptCookies()">Aceptar Cookies</button>
     </div>
 
     <script>
@@ -782,6 +798,11 @@
         window.onload = function () {
             if (localStorage.getItem('cookiesAccepted') === 'true') {
                 document.getElementById('cookieBanner').style.display = 'none';
+            } else {
+                // Mostrar banner de cookies con un pequeño retardo
+                setTimeout(function() {
+                    document.getElementById('cookieBanner').style.display = 'flex';
+                }, 1500);
             }
             updateTicketDisplay();
         }

@@ -27,9 +27,12 @@
             color: var(--text-color);
             margin: 0;
             padding: 2rem 1rem;
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -52,6 +55,7 @@
 
         #reader {
             width: 100%;
+            min-height: 50px;
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid var(--accent-blue);
@@ -122,10 +126,11 @@
 
         @media (max-width: 450px) {
             .container {
-                padding: 1rem;
+                padding: 1.2rem;
+                border-radius: 10px;
             }
             body {
-                padding: 1rem 0;
+                padding: 1.5rem 0.8rem;
             }
             h1 {
                 font-size: 1.5rem;
@@ -235,6 +240,15 @@
 
         <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
+
+    <footer style="text-align: center; padding: 3rem 2rem; padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)); font-size: 0.8rem; letter-spacing: 2px; color: #888; text-transform: uppercase;">
+        <p style="margin-bottom: 0.5rem;">A Dios sea la gloria</p>
+        <p style="font-size: 0.75rem; color: #888; margin-bottom: 1rem; text-transform: none; letter-spacing: normal;">
+            &copy; 2026 Evento de Jóvenes IPUM. Todos los derechos reservados.<br>
+            Creada por <a href="https://rssdeveloper.com" target="_blank" rel="noopener"
+                style="color: #3b8b8f; text-decoration: none;">Rss Developer</a>
+        </p>
+    </footer>
 
     <script>
         // Inicializar Supabase (Reemplazar con las reales!)
