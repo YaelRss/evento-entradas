@@ -172,32 +172,209 @@
             padding: 5rem 0;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: transparent;
+            background: linear-gradient(to right, var(--accent-teal), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Anton', sans-serif;
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
         }
 
         .info-card {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s ease;
+            background: rgba(13, 14, 18, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-fire));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
         }
 
         .info-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--accent-teal);
+            transform: translateY(-15px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(59, 139, 143, 0.2);
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: rgba(59, 139, 143, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent-teal);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover .icon-wrapper {
+            background: var(--accent-teal);
+            color: #111;
+            transform: scale(1.1) rotate(5deg);
         }
 
         .info-card h3 {
-            color: var(--accent-teal);
+            color: #fff;
             margin-bottom: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .info-card p {
+            color: #aaa;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 1.2s;
+        }
+
+        .countdown-item {
+            background: rgba(13, 14, 18, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown-item span {
+            font-size: 2rem;
+            font-family: 'Anton', sans-serif;
+            color: var(--accent-fire);
+            display: block;
+            line-height: 1;
+        }
+
+        .countdown-item .label {
+            font-size: 0.75rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        /* Secciones extra (Mapa y Recursos) */
+        .map-section,
+        .resources-section {
+            padding: 5rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .resource-card {
+            background: rgba(13, 14, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .resource-card:hover {
+            transform: translateX(10px);
+            border-color: var(--accent-teal);
+            background: rgba(59, 139, 143, 0.1);
+        }
+
+        .resource-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 139, 143, 0.2);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-teal);
+            flex-shrink: 0;
+        }
+
+        .resource-info h4 {
+            color: #fff;
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+        }
+
+        .resource-info p {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        @media (max-width: 480px) {
+            .countdown-container {
+                gap: 0.5rem;
+            }
+
+            .countdown-item {
+                min-width: 65px;
+                padding: 0.8rem 0.5rem;
+            }
+
+            .countdown-item span {
+                font-size: 1.5rem;
+            }
         }
 
         /* Modal simple para tickets */
@@ -439,21 +616,60 @@
             .verse {
                 font-size: 0.7rem;
             }
+
             .modal-content {
                 padding: 1.5rem;
                 width: 95%;
             }
+
             .info-grid {
                 gap: 1rem;
             }
         }
+
         @media (max-width: 480px) {
             h1.title {
                 font-size: clamp(2.2rem, 10vw, 3.5rem);
                 letter-spacing: 0;
             }
+
             .container {
                 padding: 0 1rem;
+            }
+        }
+
+        /* Burbuja de WhatsApp */
+        .whatsapp-bubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #25d366;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+
+        .whatsapp-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+            animation: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
             }
         }
     </style>
@@ -468,29 +684,165 @@
     <header class="container">
         <div class="church-name">Evento de Jóvenes IPUM</div>
         <h1 class="title">Derramamiento</h1>
+
+        <div id="auth-status" style="position: absolute; top: 1.5rem; right: 2rem; z-index: 100; opacity: 0; animation: fadeUp 1s ease forwards 0.5s;">
+            <button id="btnLogin" class="cta-button"
+                style="background: transparent; border: 1px solid var(--accent-teal); font-size: 0.85rem; padding: 0.5rem 1.2rem; cursor: pointer;"
+                onclick="openAuthModal(event)">Iniciar Sesión / Registro</button>
+            <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+                <span id="user-email" style="color: var(--accent-teal); font-size: 0.8rem; display: none;"></span>
+                <button onclick="handleSignOut()"
+                    style="background: transparent; border: 1px solid var(--accent-fire); border-radius: 20px; color: var(--accent-fire); cursor: pointer; font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none; transition: 0.3s;">Cerrar Sesión</button>
+            </div>
+        </div>
+
+
         <p class="verse">
             "Y después de esto derramaré mi Espíritu sobre toda carne, y profetizarán vuestros hijos y vuestras hijas;
             vuestros ancianos soñarán sueños, y vuestros jóvenes verán visiones."
             <span>Joel 2:28</span>
         </p>
-        <a href="#comprar" class="cta-button" onclick="openModal()">Adquirir Entrada</a>
+
+        <div class="countdown-container" id="countdown">
+            <div class="countdown-item">
+                <span id="days">00</span>
+                <div class="label">Días</div>
+            </div>
+            <div class="countdown-item">
+                <span id="hours">00</span>
+                <div class="label">Horas</div>
+            </div>
+            <div class="countdown-item">
+                <span id="minutes">00</span>
+                <div class="label">Min</div>
+            </div>
+            <div class="countdown-item">
+                <span id="seconds">00</span>
+                <div class="label">Seg</div>
+            </div>
+        </div>
+
+        <a href="#comprar" class="cta-button" onclick="openModal(event)">Adquirir Entrada</a>
     </header>
 
     <section class="details-section container">
-        <h2>Detalles del Evento</h2>
+        <h2 class="section-title">Detalles del Evento</h2>
         <div class="info-grid">
             <div class="info-card">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-calendar-days">
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                        <path d="M8 14h.01" />
+                        <path d="M12 14h.01" />
+                        <path d="M16 14h.01" />
+                        <path d="M8 18h.01" />
+                        <path d="M12 18h.01" />
+                        <path d="M16 18h.01" />
+                    </svg>
+                </div>
                 <h3>Fecha</h3>
-                <p>Próximamente<br>¡Reserva la fecha!</p>
+                <p>2 y 3 de Octubre del 2026</p>
             </div>
             <div class="info-card">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-map-pin">
+                        <path
+                            d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
                 <h3>Lugar</h3>
-                <p>Sede Principal IPUM<br>Ciudad de México</p>
+                <p>Salones Palazzio Videmar<br>Ciudad de México</p>
             </div>
             <div class="info-card">
-                <h3>Inversión</h3>
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-ticket">
+                        <path
+                            d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                        <path d="M13 5v2" />
+                        <path d="M13 17v2" />
+                        <path d="M13 11v2" />
+                    </svg>
+                </div>
+                <h3>Costo</h3>
                 <p>$250 MXN<br>Cupo Limitado</p>
             </div>
+        </div>
+    </section>
+
+    <section class="map-section container">
+        <h2 class="section-title">Ubicación</h2>
+        <p style="color: #aaa; margin-bottom: 2rem;">Salones Palazzio Videmar - Ciudad de México</p>
+        <div class="map-container">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d60192.576230324834!2d-99.20951825136716!3d19.454014000000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f92329d8712b%3A0x4882c87bca9ae81!2sSalones%20Palazzio%20Videmar!5e0!3m2!1ses-419!2smx!4v1778734537051!5m2!1ses-419!2smx"
+                width="100%" height="400"
+                style="border:0; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" allowfullscreen=""
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    <section class="resources-section container">
+        <h2 class="section-title">Recursos Útiles</h2>
+        <div class="resources-grid">
+            <a href="#" class="resource-card">
+                <div class="resource-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-music">
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                </div>
+                <div class="resource-info">
+                    <h4>Playlist Oficial</h4>
+                    <p>Prepárate escuchando las alabanzas</p>
+                </div>
+            </a>
+            <a href="#" class="resource-card">
+                <div class="resource-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-file-text">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                        <path d="M10 9H8" />
+                        <path d="M16 13H8" />
+                        <path d="M16 17H8" />
+                    </svg>
+                </div>
+                <div class="resource-info">
+                    <h4>Guía del Evento</h4>
+                    <p>Descarga el PDF con el itinerario</p>
+                </div>
+            </a>
+            <a href="#" class="resource-card">
+                <div class="resource-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-bed">
+                        <path d="M2 4v16" />
+                        <path d="M2 8h18a2 2 0 0 1 2 2v10" />
+                        <path d="M2 17h20" />
+                        <path d="M6 8v9" />
+                    </svg>
+                </div>
+                <div class="resource-info">
+                    <h4>Hospedaje</h4>
+                    <p>Recomendaciones cercanas</p>
+                </div>
+            </a>
         </div>
     </section>
 
@@ -502,17 +854,16 @@
                 style="color: var(--accent-teal); text-decoration: none;">Rss Developer</a>
         </p>
         <div class="footer-links">
-            <a href="#">Aviso de Privacidad</a>
-            <a href="#">Política de Cookies</a>
-            <a href="#">Términos y Condiciones</a>
+            <a href="aviso-privacidad.html">Aviso de Privacidad</a>
+            <a href="politica-cookies.html">Política de Cookies</a>
+            <a href="terminos-condiciones.html">Términos y Condiciones</a>
         </div>
     </footer>
 
     <div class="cookie-banner" id="cookieBanner">
         <div class="cookie-text">
             Utilizamos cookies propias y de terceros para mejorar nuestros servicios, personalizar tu experiencia y
-            analizar el tráfico de nuestro sitio web. Al continuar navegando, aceptas nuestra <a href="#">Política de
-                Cookies</a>.
+            analizar el tráfico de nuestro sitio web. Al continuar navegando, aceptas nuestra <a href="politica-cookies.html">Política de Cookies</a>.
         </div>
         <button class="cookie-btn" onclick="acceptCookies()">Aceptar Cookies</button>
     </div>
@@ -541,17 +892,102 @@
                     <input type="email" id="email" placeholder="tu@correo.com">
                 </div>
                 <div class="form-group">
-                    <label for="quantity">Cantidad de Boletos ($250 MXN c/u)</label>
+                    <label for="quantity">Cantidad de Boletos</label>
                     <select id="quantity">
-                        <option value="1">1 Boleto - $250 MXN</option>
-                        <option value="2">2 Boletos - $500 MXN</option>
-                        <option value="3">3 Boletos - $750 MXN</option>
-                        <option value="4">4 Boletos - $1000 MXN</option>
-                        <option value="5">5 Boletos - $1250 MXN</option>
+                        <option value="1">1 Boleto ($250 MXN)</option>
+                        <option value="2">2 Boletos ($500 MXN)</option>
+                        <option value="3">3 Boletos ($750 MXN)</option>
+                        <option value="4">4 Boletos ($1000 MXN)</option>
+                        <option value="5">5 Boletos ($1250 MXN)</option>
                     </select>
-                <div id="form-error" style="color: #ff4444; font-size: 0.9rem; margin-bottom: 1rem; display: none; font-weight: bold; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; border: 1px solid #ff4444;"></div>
-                <button type="button" class="cta-button buy-btn" id="submitBtn" onclick="handlePurchase(event)">Finalizar Compra</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Método de Pago</label>
+                    <select id="paymentMethod" style="background: #1a1b1e; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; width: 100%;">
+                        <option value="oxxo">Depósito en OXXO (Efectivo)</option>
+                        <option value="card">Tarjeta de Crédito / Débito (Stripe)</option>
+                        <option value="spei">Transferencia Bancaria (SPEI)</option>
+                    </select>
+                </div>
+
+                <!-- Desglose de Precios Dinámico -->
+                <div id="price-breakdown" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; margin-bottom: 0.5rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; color: #ccc;">
+                        <span>Subtotal:</span>
+                        <span id="breakdown-subtotal" style="font-weight: 600; color: #fff;">$250.00 MXN</span>
+                    </div>
+                    <div id="commission-row" style="display: none; justify-content: space-between; color: #ccc; transition: all 0.3s ease;">
+                        <span>Cargo por servicio (Tarjeta):</span>
+                        <span id="breakdown-commission" style="font-weight: 600; color: var(--accent-fire);">$15.00 MXN</span>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.4rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold;">
+                        <span style="color: #fff;">Total a pagar:</span>
+                        <span id="breakdown-total" style="color: var(--accent-fire); font-family: 'Anton', sans-serif; letter-spacing: 0.5px;">$250.00 MXN</span>
+                    </div>
+                </div>
+
+
+                
+                <div style="background: rgba(255, 90, 85, 0.1); border-left: 3px solid var(--accent-fire); padding: 0.8rem; margin-bottom: 1rem; border-radius: 4px; font-size: 0.85rem; line-height: 1.4; color: #ccc;">
+                    <strong style="color: var(--accent-fire);">⚠ Importante:</strong> Considera que <b>NO hay reembolsos</b> bajo ninguna circunstancia. Cuida tu boleto, ya que su código QR será tu único medio de acceso el día del evento.
+                </div>
+
+                <div id="form-error"
+                    style="color: #ff4444; font-size: 0.9rem; margin-bottom: 1rem; display: none; font-weight: bold; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; border: 1px solid #ff4444;">
+                </div>
+                <button type="button" class="cta-button buy-btn" id="submitBtn"
+                    onclick="handlePurchase(event)">Finalizar Compra</button>
             </form>
+        </div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAuthModal()">×</span>
+            <h2 id="auth-title" style="margin-bottom: 1.5rem; color: var(--accent-teal);">Bienvenido</h2>
+
+            <div class="ticket-form">
+
+                <div id="register-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="auth-nombre" placeholder="Tu nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" id="auth-apellido" placeholder="Tu apellido">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Nacimiento</label>
+                        <input type="date" id="auth-dob">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="auth-email" placeholder="tu@correo.com">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="auth-password" placeholder="••••••••">
+                </div>
+
+                <div class="form-group" id="register-password-confirm" style="display: none;">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="auth-password-confirm" placeholder="••••••••">
+                </div>
+
+                <div id="auth-error"
+                    style="color: #ff4444; font-size: 0.85rem; display: none; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; margin-bottom: 1rem;">
+                </div>
+
+                <button class="cta-button" id="btn-auth-action" onclick="submitAuth()"
+                    style="width: 100%; margin-bottom: 1rem;">Entrar</button>
+                <button id="btn-auth-toggle" onclick="toggleAuthMode()"
+                    style="background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">¿No tienes cuenta? Regístrate aquí</button>
+            </div>
         </div>
     </div>
 
@@ -564,17 +1000,268 @@
             if (window.supabase) {
                 dbClient = window.supabase.createClient(supabaseUrl, supabaseKey);
             }
-        } catch(err) {
+        } catch (err) {
             console.error("Supabase error de inicialización:", err);
         }
 
+        // --- LÓGICA DE AUTENTICACIÓN ---
+
+        let isLoginMode = true;
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const actionBtn = document.getElementById('btn-auth-action');
+            const toggleBtn = document.getElementById('btn-auth-toggle');
+            const errorDiv = document.getElementById('auth-error');
+            const regFields = document.getElementById('register-fields');
+            const confirmPass = document.getElementById('register-password-confirm');
+            
+            errorDiv.style.display = 'none'; 
+            
+            if (isLoginMode) {
+                title.textContent = 'Bienvenido';
+                actionBtn.textContent = 'Entrar';
+                toggleBtn.textContent = '¿No tienes cuenta? Regístrate aquí';
+                regFields.style.display = 'none';
+                confirmPass.style.display = 'none';
+            } else {
+                title.textContent = 'Crear Cuenta';
+                actionBtn.textContent = 'Registrarse';
+                toggleBtn.textContent = '¿Ya tienes cuenta? Inicia sesión';
+                regFields.style.display = 'block';
+                confirmPass.style.display = 'block';
+            }
+        }
+
+        function submitAuth() {
+            if (isLoginMode) {
+                handleSignIn();
+            } else {
+                handleSignUp();
+            }
+        }
+
+        function openAuthModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('auth-error').style.display = 'none';
+        }
+
+        // Registro de usuario
+        async function handleSignUp() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const confirmPass = document.getElementById('auth-password-confirm').value;
+            const nombre = document.getElementById('auth-nombre').value.trim();
+            const apellido = document.getElementById('auth-apellido').value.trim();
+            const dob = document.getElementById('auth-dob').value;
+            
+            const errorDiv = document.getElementById('auth-error');
+
+            if (!email || !password || !confirmPass || !nombre || !apellido || !dob) {
+                errorDiv.textContent = "Por favor completa todos los campos.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPass) {
+                errorDiv.textContent = "Las contraseñas no coinciden.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const btn = document.getElementById('btn-auth-action');
+            btn.textContent = "Registrando...";
+
+            const { data, error } = await dbClient.auth.signUp({ 
+                email, 
+                password,
+                options: {
+                    data: {
+                        first_name: nombre,
+                        last_name: apellido,
+                        date_of_birth: dob
+                    }
+                }
+            });
+
+            if (error) {
+                errorDiv.textContent = "Error: " + error.message;
+                errorDiv.style.display = 'block';
+                btn.textContent = "Registrarse";
+            } else {
+                btn.textContent = "Registrarse";
+                // Limpiar campos de contraseña para seguridad
+                document.getElementById('auth-password').value = "";
+                document.getElementById('auth-password-confirm').value = "";
+                
+                alert("¡Registro exitoso! Te hemos enviado un correo de verificación. Por favor revisa tu bandeja de entrada o spam para verificar tu cuenta antes de iniciar sesión.");
+                toggleAuthMode(); // Cambiar a modo inicio de sesión
+            }
+        }
+
+        // Inicio de sesión
+        async function handleSignIn() {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const errorDiv = document.getElementById('auth-error');
+            const btn = document.getElementById('btn-auth-action');
+
+            if (!email || !password) {
+                errorDiv.textContent = "Por favor ingresa correo y contraseña.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            btn.textContent = "Entrando...";
+            const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                errorDiv.textContent = "Error: " + error.message;
+                errorDiv.style.display = 'block';
+                btn.textContent = "Entrar";
+            } else {
+                closeAuthModal();
+                btn.textContent = "Entrar";
+                await checkUserSession();
+                openModal();
+            }
+        }
+
+        // Cerrar sesión
+        async function handleSignOut() {
+            await dbClient.auth.signOut();
+            checkUserSession();
+        }
+
+        // Verificar sesión activa
+        async function checkUserSession() {
+            if (!dbClient) return;
+            try {
+                const { data: { session }, error } = await dbClient.auth.getSession();
+                const loginBtn = document.getElementById('btnLogin');
+                const userInfo = document.getElementById('user-info');
+                const userEmailSpan = document.getElementById('user-email');
+
+                if (session && !error) {
+                    if (loginBtn) loginBtn.style.display = 'none';
+                    if (userInfo) userInfo.style.display = 'flex';
+                    if (userEmailSpan) userEmailSpan.textContent = session.user.email;
+                    // Auto-llenar el campo de email en el formulario de compra
+                    const emailInput = document.getElementById('email');
+                    if (emailInput) {
+                        emailInput.value = session.user.email;
+                        emailInput.readOnly = true;
+                    }
+                } else {
+                    if (loginBtn) loginBtn.style.display = 'inline-block';
+                    if (userInfo) userInfo.style.display = 'none';
+                }
+            } catch (err) {
+                console.error("Error validando sesión:", err);
+            }
+        }
+
+        // Llamar al verificar sesión al cargar
+        window.addEventListener('load', checkUserSession);
         const MAX_TICKETS = 1200;
 
-        // Lógica simple para abrir/cerrar el modal de compra
-        const modal = document.getElementById('ticketModal');
+        // Lógica de la cuenta regresiva
+        const eventDate = new Date("Oct 2, 2026 10:00:00").getTime();
 
-        function openModal() {
-            modal.style.display = 'flex';
+        const countdownTimer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                const countdownElement = document.getElementById("countdown");
+                if (countdownElement) countdownElement.style.display = "none";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const daysElement = document.getElementById("days");
+            if (daysElement) {
+                daysElement.innerText = String(days).padStart(2, '0');
+                document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+                document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+                document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+            }
+        }, 1000);
+
+        // Lógica simple para abrir/cerrar el modal de compra y calcular precios
+        const modal = document.getElementById('ticketModal');
+        const TICKET_PRICE = 250;
+        const COMMISSION_PER_TICKET = 15;
+
+        function updatePriceBreakdown() {
+            const qtySelect = document.getElementById('quantity');
+            const methodSelect = document.getElementById('paymentMethod');
+            if (!qtySelect || !methodSelect) return;
+
+            const qty = parseInt(qtySelect.value) || 1;
+            const method = methodSelect.value;
+            
+            const subtotal = TICKET_PRICE * qty;
+            const commission = method === 'card' ? (COMMISSION_PER_TICKET * qty) : 0;
+            const total = subtotal + commission;
+
+            document.getElementById('breakdown-subtotal').textContent = `$${subtotal.toFixed(2)} MXN`;
+            
+            const commissionRow = document.getElementById('commission-row');
+            if (commission > 0) {
+                commissionRow.style.display = 'flex';
+                document.getElementById('breakdown-commission').textContent = `$${commission.toFixed(2)} MXN`;
+            } else {
+                commissionRow.style.display = 'none';
+            }
+            
+            document.getElementById('breakdown-total').textContent = `$${total.toFixed(2)} MXN`;
+        }
+
+        // Registrar escuchadores de eventos
+        document.getElementById('quantity').addEventListener('change', updatePriceBreakdown);
+        document.getElementById('paymentMethod').addEventListener('change', updatePriceBreakdown);
+
+        async function openModal(e) {
+            if (e) e.preventDefault();
+            
+            if (!dbClient) {
+                console.error("No hay dbClient disponible.");
+                openAuthModal(e);
+                return;
+            }
+
+            try {
+                const { data: { session }, error } = await dbClient.auth.getSession();
+                
+                if (!session || error) {
+                    // Es obligatorio iniciar sesión
+                    openAuthModal(e);
+                } else {
+                    // Si ya inició sesión, abrimos el modal de compra
+                    modal.style.display = 'flex';
+                    const emailInput = document.getElementById('email');
+                    if (emailInput) {
+                        emailInput.value = session.user.email;
+                        emailInput.readOnly = true;
+                    }
+                    updatePriceBreakdown(); // Inicializar desglose
+                }
+            } catch (err) {
+                console.error("Error al obtener sesión en openModal:", err);
+                openAuthModal(e);
+            }
         }
 
         function closeModal() {
@@ -624,15 +1311,31 @@
             const errorDiv = document.getElementById('form-error');
             errorDiv.style.display = 'none';
 
-            const qty = parseInt(document.getElementById('quantity').value);
-            const name = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
-
             if (!dbClient) {
                 errorDiv.textContent = "⚠ Sistema bloqueado. Desactiva los escudos de Brave o tu AdBlocker.";
                 errorDiv.style.display = 'block';
                 return;
             }
+
+            try {
+                const { data: { session } } = await dbClient.auth.getSession();
+                if (!session) {
+                    // Si no está logueado, le pedimos que lo haga antes de comprar
+                    closeModal();
+                    openAuthModal();
+                    return;
+                }
+            } catch(err) {
+                console.error(err);
+                errorDiv.textContent = "Error validando tu sesión. Intenta de nuevo.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const qty = parseInt(document.getElementById('quantity').value);
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const method = document.getElementById('paymentMethod').value;
 
             if (!name || !email) {
                 errorDiv.textContent = "⚠ Por favor, completa tu nombre y correo.";
@@ -645,13 +1348,16 @@
                 btn.style.opacity = '0.7';
                 btn.disabled = true;
 
+                // Definir estado inicial: todos se crean como 'pending'
+                const initialStatus = 'pending';
+
                 // Validación rápida de límite
                 const { count, error: countError } = await dbClient.from('tickets').select('*', { count: 'exact', head: true });
-                
+
                 if (countError) {
                     throw new Error("Revisa tu BD: " + countError.message);
                 }
-                
+
                 if (count + qty > MAX_TICKETS) {
                     errorDiv.textContent = "Lo sentimos, no hay suficientes boletos disponibles.";
                     errorDiv.style.display = 'block';
@@ -662,33 +1368,71 @@
                 // Preparar el array de boletos a insertar
                 const ticketsToInsert = [];
                 for (let i = 0; i < qty; i++) {
-                    ticketsToInsert.push({ owner_name: name, owner_email: email, used: false });
+                    ticketsToInsert.push({ 
+                        owner_name: name, 
+                        owner_email: email, 
+                        used: false,
+                        status: initialStatus,
+                        payment_method: method
+                    });
                 }
 
                 // Insertar en Supabase
                 const { data, error } = await dbClient
                     .from('tickets')
                     .insert(ticketsToInsert)
-                    .select(); 
+                    .select();
 
                 if (error) {
                     throw new Error("Error insertando: " + error.message);
                 }
 
-                // Llamar en el fondo a nuestra Netlify Function para enviar el correo (no bloquea la UI)
-                fetch('/.netlify/functions/sendTicket', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketArray: data })
-                }).then(res => res.json()).then(result => console.log('Envío correo:', result))
-                  .catch(err => console.error("Error al pedir envío de correo:", err));
+                if (!data || data.length === 0) {
+                    throw new Error("No se devolvieron los boletos. Revisa las políticas RLS de Supabase.");
+                }
 
-                // Generar la interfaz web inmediatamente
-                showQRTickets(data);
-                
-                // Reiniciar el formulario
-                document.getElementById('purchaseForm').reset();
-                resetButton(btn);
+                if (method === 'card') {
+                    // Para tarjeta, redirigimos a la pasarela de pago segura de Stripe
+                    const stripeResponse = await fetch('/.netlify/functions/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ticketIds: data.map(t => t.id),
+                            email: email,
+                            quantity: qty
+                        })
+                    });
+
+                    const stripeResult = await stripeResponse.json();
+                    
+                    if (stripeResult.error) {
+                        throw new Error("Stripe Error: " + stripeResult.error);
+                    }
+
+                    if (stripeResult.url) {
+                        // Redirigir inmediatamente a Stripe Checkout
+                        window.location.href = stripeResult.url;
+                        return;
+                    } else {
+                        throw new Error("No se pudo obtener la dirección segura de pago.");
+                    }
+                } else {
+                    // Flujo tradicional para OXXO y SPEI
+                    // Llamar en el fondo a nuestra Netlify Function para enviar el correo (no bloquea la UI)
+                    fetch('/.netlify/functions/sendTicket', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ticketArray: data })
+                    }).then(res => res.json()).then(result => console.log('Envío correo:', result))
+                        .catch(err => console.error("Error al pedir envío de correo:", err));
+
+                    // Generar la interfaz web inmediatamente
+                    showQRTickets(data);
+
+                    // Reiniciar el formulario
+                    document.getElementById('purchaseForm').reset();
+                    resetButton(btn);
+                }
             } catch (err) {
                 console.error("Excepción en handlePurchase:", err);
                 errorDiv.textContent = "✖ ERROR: " + err.message;
@@ -714,11 +1458,13 @@
                 document.body.appendChild(qrContainer);
             }
 
+            const isPending = tickets[0].status === 'pending';
+
             let html = `
                 <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
                     <span class="close-btn" onclick="document.getElementById('qrResultModal').style.display='none'">&times;</span>
-                    <h2 style="color: var(--accent-fire); margin-bottom: 1rem;">¡Accesos Generados!</h2>
-                    <p style="margin-bottom: 2rem;">Toma captura de pantalla a cada Código QR o guárdalo. <strong>Será escaneado en la entrada.</strong></p>
+                    <h2 style="color: var(--accent-fire); margin-bottom: 1rem;">${isPending ? '¡Reserva Realizada!' : '¡Accesos Generados!'}</h2>
+                    <p style="margin-bottom: 2rem;">${isPending ? 'Tus boletos están apartados. Realiza tu pago para activarlos.' : 'Toma captura de pantalla a cada Código QR o guárdalo. <strong>Será escaneado en la entrada.</strong>'}</p>
                     <div id="qrs-wrapper" style="display: flex; flex-direction: column; gap: 2rem; align-items: center;"></div>
                 </div>
             `;
@@ -729,11 +1475,10 @@
             tickets.forEach(ticket => {
                 const ticketCard = document.createElement('div');
 
-                // --- Diseño con Flyer Real ---
                 ticketCard.style = `
                     background: #111 url('flyer.jpg') no-repeat center center;
                     background-size: cover;
-                    border: 1px solid rgba(255, 90, 85, 0.4);
+                    border: 1px solid ${isPending ? 'rgba(255,255,255,0.2)' : 'rgba(255, 90, 85, 0.4)'};
                     border-radius: 15px;
                     color: #fff;
                     text-align: center;
@@ -745,39 +1490,41 @@
                     position: relative;
                     display: flex;
                     flex-direction: column;
-                    justify-content: flex-end; /* Mantener QR abajo */
+                    justify-content: flex-end;
                     margin: 0 auto;
+                    filter: ${isPending ? 'grayscale(0.5)' : 'none'};
                 `;
 
-                // Overlay oscuro degradado en la parte inferior para hacer legible el QR y datos
                 const overlay = document.createElement('div');
                 overlay.style = 'background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0) 100%); padding: 2rem 1.5rem 1.5rem 1.5rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;';
 
-                // Mostrar Número de Serie
-                const serial = document.createElement('div');
-                serial.innerHTML = `<span style="color: #fff; font-weight: 700; font-size: 1.2rem; letter-spacing: 2px;">BOLETO N° ${String(ticket.serial_number).padStart(4, '0')}</span>`;
-                serial.style = 'margin-bottom: 1rem;';
-                overlay.appendChild(serial);
+                if (isPending) {
+                    const pendingLabel = document.createElement('div');
+                    pendingLabel.style = 'background: var(--accent-fire); color: #fff; padding: 10px 20px; border-radius: 5px; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; box-shadow: 0 0 20px rgba(255,90,85,0.5); border: 2px solid #fff;';
+                    pendingLabel.innerText = "Pendiente de Pago";
+                    overlay.appendChild(pendingLabel);
 
-                // Contenedor blanco para el QR para asegurar que pueda escanearse independientemente del fondo oscuro
-                const qrBorder = document.createElement('div');
-                qrBorder.style = 'background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+                    const instr = document.createElement('p');
+                    instr.style = "font-size: 0.8rem; color: #ccc; margin-bottom: 1rem;";
+                    instr.innerText = "Instrucciones de pago enviadas por correo.";
+                    overlay.appendChild(instr);
+                } else {
+                    const qrBorder = document.createElement('div');
+                    qrBorder.style = 'background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+                    const qrDiv = document.createElement('div');
+                    qrBorder.appendChild(qrDiv);
+                    overlay.appendChild(qrBorder);
 
-                const qrDiv = document.createElement('div');
-                qrBorder.appendChild(qrDiv);
-                overlay.appendChild(qrBorder);
+                    new QRCode(qrDiv, {
+                        text: ticket.id,
+                        width: 140,
+                        height: 140,
+                        colorDark: "#050505",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
 
-                // Generar el código QR con el UUID secreto (sólo para staff)
-                new QRCode(qrDiv, {
-                    text: ticket.id,
-                    width: 140,
-                    height: 140,
-                    colorDark: "#050505",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-
-                // Datos del titular
                 const owner = document.createElement('p');
                 owner.innerHTML = `<span style="font-size: 0.75rem; color: #ccc; text-transform: uppercase;">Titular</span><br><strong style="font-size: 1.1rem; color: var(--accent-fire); text-transform: uppercase;">${ticket.owner_name}</strong>`;
                 owner.style = 'line-height: 1.2; margin: 0;';
@@ -800,13 +1547,45 @@
                 document.getElementById('cookieBanner').style.display = 'none';
             } else {
                 // Mostrar banner de cookies con un pequeño retardo
-                setTimeout(function() {
+                setTimeout(function () {
                     document.getElementById('cookieBanner').style.display = 'flex';
                 }, 1500);
             }
             updateTicketDisplay();
+
+            // Detectar si regresa de un pago exitoso de Stripe Checkout
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('payment') === 'success') {
+                // Limpiar la URL de los parámetros para que no se recargue el mensaje
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // Mostrar una hermosa modal de éxito estilizada
+                let successModal = document.createElement('div');
+                successModal.className = 'modal';
+                successModal.style.display = 'flex';
+                successModal.style.zIndex = '3000'; // Asegurar que esté encima de todo
+                successModal.innerHTML = `
+                    <div class="modal-content" style="border-color: var(--accent-teal); text-align: center; max-width: 420px; padding: 2.5rem 2rem;">
+                        <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+                        <div style="width: 70px; height: 70px; background: rgba(59, 139, 143, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem auto; color: var(--accent-teal); border: 2px solid var(--accent-teal);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <h2 style="color: var(--accent-teal); margin-bottom: 1rem; text-transform: uppercase; font-family: 'Anton', sans-serif; letter-spacing: 1px;">¡Pago Exitoso!</h2>
+                        <p style="color: #ccc; margin-bottom: 1.8rem; line-height: 1.6; font-size: 0.95rem;">Tu transacción ha sido procesada de forma segura con Stripe. Tus boletos digitales con códigos QR han sido generados y enviados a tu correo electrónico.</p>
+                        <button class="cta-button" onclick="this.parentElement.parentElement.style.display='none'" style="background: linear-gradient(45deg, var(--accent-teal), #2a6a6d); box-shadow: 0 10px 30px rgba(59, 139, 143, 0.4); width: 100%; border-radius: 50px; font-weight: 700;">Aceptar</button>
+                    </div>
+                `;
+                document.body.appendChild(successModal);
+            }
         }
     </script>
+
+    <!-- Burbuja de Asistencia WhatsApp -->
+    <a href="https://wa.me/525612793889?text=Hola,%20tengo%20una%20duda%20sobre%20el%20evento%20Derramamiento." target="_blank" rel="noopener noreferrer" class="whatsapp-bubble" aria-label="Asistencia por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="#fff">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+    </a>
 </body>
 
 </html>

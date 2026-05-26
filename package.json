@@ -3,6 +3,8 @@
     "jsdom": "^29.0.1"
   },
   "dependencies": {
-    "nodemailer": "^8.0.4"
+    "@supabase/supabase-js": "^2.43.0",
+    "nodemailer": "^8.0.4",
+    "stripe": "^15.8.0"
   }
 }
