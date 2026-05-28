@@ -795,19 +795,19 @@
     <section class="resources-section container">
         <h2 class="section-title">Recursos Útiles</h2>
         <div class="resources-grid">
-            <a href="#" class="resource-card">
+            <a href="#" class="resource-card" onclick="openFaqModal(event)">
                 <div class="resource-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-music">
-                        <path d="M9 18V5l12-2v13" />
-                        <circle cx="6" cy="18" r="3" />
-                        <circle cx="18" cy="16" r="3" />
+                        class="lucide lucide-help-circle">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
                 </div>
                 <div class="resource-info">
-                    <h4>Playlist Oficial</h4>
-                    <p>Prepárate escuchando las alabanzas</p>
+                    <h4>Preguntas Frecuentes</h4>
+                    <p>Resuelve tus dudas del evento</p>
                 </div>
             </a>
             <a href="#" class="resource-card">
@@ -987,6 +987,48 @@
                     style="width: 100%; margin-bottom: 1rem;">Entrar</button>
                 <button id="btn-auth-toggle" onclick="toggleAuthMode()"
                     style="background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">¿No tienes cuenta? Regístrate aquí</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Preguntas Frecuentes (FAQ) -->
+    <div class="modal" id="faqModal">
+        <div class="modal-content" style="max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; text-align: left; padding: 2.5rem; border-color: var(--accent-teal);">
+            <span class="close-btn" onclick="closeFaqModal()">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: var(--accent-teal); font-family: 'Anton', sans-serif; letter-spacing: 1px; text-transform: uppercase; text-align: center;">Preguntas Frecuentes</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;" open>
+                    <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
+                        <span>¿Qué incluye mi boleto?</span>
+                        <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
+                    </summary>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Incluye el acceso completo a todas las conferencias, plenarias y talleres especiales durante los dos días del evento (2 y 3 de Octubre del 2026).</p>
+                </details>
+
+                <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                    <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
+                        <span>¿Puedo transferir mi boleto a otra persona?</span>
+                        <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
+                    </summary>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Sí. El código QR es el único pase de acceso. Se puede transferir a otra persona, pero ten en cuenta que el código QR es único y solo podrá ser escaneado una vez en la entrada del evento.</p>
+                </details>
+
+                <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                    <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
+                        <span>¿Hay estacionamiento en el lugar?</span>
+                        <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
+                    </summary>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Sí. Los Salones Palazzio Videmar cuentan con áreas de estacionamiento y opciones de servicio de valet parking para la seguridad de tu vehículo.</p>
+                </details>
+
+                <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                    <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
+                        <span>¿Qué hago si no recibí mi correo de confirmación?</span>
+                        <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
+                    </summary>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Primero revisa tu bandeja de spam. Si no está ahí, escríbenos directamente usando el botón de asistencia de WhatsApp (esquina inferior derecha) proporcionando el correo con el que te registraste y buscaremos tus boletos inmediatamente.</p>
+                </details>
             </div>
         </div>
     </div>
@@ -1268,6 +1310,18 @@
             modal.style.display = 'none';
         }
 
+        // Funciones para el Modal de FAQs
+        const faqModal = document.getElementById('faqModal');
+
+        function openFaqModal(e) {
+            if (e) e.preventDefault();
+            if (faqModal) faqModal.style.display = 'flex';
+        }
+
+        function closeFaqModal() {
+            if (faqModal) faqModal.style.display = 'none';
+        }
+
         // Cerrar modal si se hace clic fuera del contenido
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -1276,6 +1330,9 @@
             const qrModal = document.getElementById('qrResultModal');
             if (event.target == qrModal) {
                 qrModal.style.display = "none";
+            }
+            if (event.target == faqModal) {
+                faqModal.style.display = "none";
             }
         }
 
