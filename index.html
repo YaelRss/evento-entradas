@@ -9,11 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;700&display=swap"
         rel="stylesheet">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="shortcut icon" href="/favicon.ico?v=3" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="/site.webmanifest?v=3" />
     
     <style>
         :root {
@@ -406,6 +406,21 @@
             max-width: 400px;
             width: 90%;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Estilizado premium de barra de desplazamiento para modal */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--accent-fire);
+            border-radius: 10px;
         }
 
         .close-btn {
@@ -816,7 +831,8 @@
                     <p>Resuelve tus dudas del evento</p>
                 </div>
             </a>
-            <a href="#" class="resource-card">
+            <div class="resource-card" style="opacity: 0.65; cursor: not-allowed; pointer-events: none; position: relative; user-select: none;">
+                <div style="position: absolute; top: 10px; right: 15px; background: rgba(255, 90, 85, 0.2); border: 1px solid var(--accent-fire); color: var(--accent-fire); font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">En Mantenimiento</div>
                 <div class="resource-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -829,11 +845,12 @@
                     </svg>
                 </div>
                 <div class="resource-info">
-                    <h4>Guía del Evento</h4>
-                    <p>Descarga el PDF con el itinerario</p>
+                    <h4>Cronograma / Itinerario</h4>
+                    <p>Próximamente disponible para descarga</p>
                 </div>
-            </a>
-            <a href="#" class="resource-card">
+            </div>
+            <div class="resource-card" style="opacity: 0.65; cursor: not-allowed; pointer-events: none; position: relative; user-select: none;">
+                <div style="position: absolute; top: 10px; right: 15px; background: rgba(255, 90, 85, 0.2); border: 1px solid var(--accent-fire); color: var(--accent-fire); font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">En Mantenimiento</div>
                 <div class="resource-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -846,9 +863,9 @@
                 </div>
                 <div class="resource-info">
                     <h4>Hospedaje</h4>
-                    <p>Recomendaciones cercanas</p>
+                    <p>Recomendaciones y opciones de estadía</p>
                 </div>
-            </a>
+            </div>
         </div>
     </section>
 
@@ -907,6 +924,8 @@
                         <option value="5">5 Boletos ($1250 MXN)</option>
                     </select>
                 </div>
+
+                <div id="attendees-names-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;"></div>
 
                 <div class="form-group">
                     <label for="paymentMethod">Método de Pago</label>
@@ -1004,7 +1023,7 @@
                         <span>¿Qué incluye mi boleto?</span>
                         <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
                     </summary>
-                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Incluye el acceso completo a todas las conferencias, plenarias y talleres especiales durante los dos días del evento (2 y 3 de Octubre del 2026).</p>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Incluye el acceso completo a la conferencias durante los dos días del evento (2 y 3 de Octubre del 2026).</p>
                 </details>
 
                 <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
@@ -1015,13 +1034,13 @@
                     <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Sí. El código QR es el único pase de acceso. Se puede transferir a otra persona, pero ten en cuenta que el código QR es único y solo podrá ser escaneado una vez en la entrada del evento.</p>
                 </details>
 
-                <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                <!-- <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
                     <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
                         <span>¿Hay estacionamiento en el lugar?</span>
                         <span style="color: var(--accent-teal); font-size: 1.2rem;">+</span>
                     </summary>
                     <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Sí. Los Salones Palazzio Videmar cuentan con áreas de estacionamiento y opciones de servicio de valet parking para la seguridad de tu vehículo.</p>
-                </details>
+                </details> -->
 
                 <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
                     <summary style="font-weight: bold; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none;">
@@ -1259,6 +1278,56 @@
 
             document.getElementById('breakdown-subtotal').textContent = `$${subtotal.toFixed(2)} MXN`;
             document.getElementById('breakdown-total').textContent = `$${total.toFixed(2)} MXN`;
+            
+            // Actualizar campos de asistentes adicionales dinámicamente
+            updateAttendeeInputs();
+        }
+
+        function updateAttendeeInputs() {
+            const qtySelect = document.getElementById('quantity');
+            const container = document.getElementById('attendees-names-container');
+            if (!qtySelect || !container) return;
+
+            const qty = parseInt(qtySelect.value) || 1;
+            container.innerHTML = ''; // Limpiar campos previos
+
+            if (qty > 1) {
+                // Título de la sección
+                const header = document.createElement('h4');
+                header.style = 'font-size: 0.85rem; color: var(--accent-teal); margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; margin-bottom: 0.5rem;';
+                header.innerText = 'Titulares de los boletos adicionales';
+                container.appendChild(header);
+
+                // Campos de entrada para boletos adicionales
+                for (let i = 2; i <= qty; i++) {
+                    const group = document.createElement('div');
+                    group.className = 'form-group';
+                    group.style = 'display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.5rem; text-align: left;';
+                    
+                    const label = document.createElement('label');
+                    label.style = 'font-size: 0.75rem; color: #ccc; font-weight: bold;';
+                    label.innerText = `Nombre Completo (Boleto #${i})`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = `Nombre del asistente #${i}`;
+                    input.className = 'attendee-name-input';
+                    input.style = 'padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: #fff; font-family: inherit; width: 100%;';
+                    
+                    input.addEventListener('focus', () => input.style.borderColor = 'var(--accent-teal)');
+                    input.addEventListener('blur', () => input.style.borderColor = 'rgba(255, 255, 255, 0.2)');
+
+                    group.appendChild(label);
+                    group.appendChild(input);
+                    container.appendChild(group);
+                }
+
+                // Advertencia de Identificación Oficial
+                const warningBox = document.createElement('div');
+                warningBox.style = 'background: rgba(255, 90, 85, 0.1); border-left: 3px solid var(--accent-fire); padding: 0.8rem; margin: 0.5rem 0 1rem 0; border-radius: 4px; font-size: 0.8rem; line-height: 1.4; color: #ccc; text-align: left;';
+                warningBox.innerHTML = `<strong style="color: var(--accent-fire);">⚠ Verificación obligatoria:</strong> Asegúrate de ingresar el nombre real de cada persona tal como aparece en su identificación oficial (INE, pasaporte, etc.). El día del evento **se solicitará una identificación física** en la entrada para validar el nombre registrado en cada boleto.`;
+                container.appendChild(warningBox);
+            }
         }
 
         // Registrar escuchadores de eventos
@@ -1390,6 +1459,21 @@
                 return;
             }
 
+            // Recolectar y validar nombres de asistentes adicionales si qty > 1
+            const additionalNames = [];
+            if (qty > 1) {
+                const inputs = document.querySelectorAll('.attendee-name-input');
+                for (let i = 0; i < inputs.length; i++) {
+                    const val = inputs[i].value.trim();
+                    if (!val) {
+                        errorDiv.textContent = `⚠ Por favor, completa el nombre del Boleto #${i + 2}.`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    additionalNames.push(val);
+                }
+            }
+
             try {
                 btn.textContent = 'Procesando...';
                 btn.style.opacity = '0.7';
@@ -1414,10 +1498,19 @@
 
                 // Preparar el array de boletos a insertar
                 const ticketsToInsert = [];
-                for (let i = 0; i < qty; i++) {
+                // El primer boleto es para el titular principal (comprador)
+                ticketsToInsert.push({ 
+                    owner_name: name, 
+                    owner_email: email, 
+                    used: false,
+                    status: initialStatus,
+                    payment_method: method
+                });
+                // Los boletos adicionales van con sus nombres individuales
+                for (let i = 0; i < qty - 1; i++) {
                     ticketsToInsert.push({ 
-                        owner_name: name, 
-                        owner_email: email, 
+                        owner_name: additionalNames[i], 
+                        owner_email: email, // Comparten el mismo correo para confirmación centralizada
                         used: false,
                         status: initialStatus,
                         payment_method: method
@@ -1507,7 +1600,7 @@
                         
                         <p style="color: #ccc; margin-bottom: 1.2rem; font-size: 0.85rem;">⚠️ <strong>Nota:</strong> Envía tu comprobante de pago haciendo clic en el botón de abajo para activar y recibir tus accesos QR de inmediato.</p>
                         
-                        <a href="https://wa.me/525612793889?text=${whatsappMsg}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25d366; color: #fff; font-weight: 700; text-transform: uppercase; padding: 0.8rem; border-radius: 30px; text-decoration: none; text-align: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <a href="https://wa.me/522294734067?text=${whatsappMsg}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25d366; color: #fff; font-weight: 700; text-transform: uppercase; padding: 0.8rem; border-radius: 30px; text-decoration: none; text-align: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
                             Enviar Comprobante por WhatsApp
                         </a>
@@ -1607,7 +1700,7 @@
     </script>
 
     <!-- Burbuja de Asistencia WhatsApp -->
-    <a href="https://wa.me/525612793889?text=Hola,%20tengo%20una%20duda%20sobre%20el%20evento%20Derramamiento." target="_blank" rel="noopener noreferrer" class="whatsapp-bubble" aria-label="Asistencia por WhatsApp">
+    <a href="https://wa.me/522294734067?text=Hola,%20tengo%20una%20duda%20sobre%20el%20evento%20Derramamiento." target="_blank" rel="noopener noreferrer" class="whatsapp-bubble" aria-label="Asistencia por WhatsApp">
         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="#fff">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
         </svg>

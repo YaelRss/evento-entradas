@@ -26,18 +26,21 @@ exports.handler = async (event, context) => {
             }
         });
 
-        // Generar el bloque visual HTML de los tickets
+        // Generar el bloque visual HTML de los tickets con estilo premium idéntico a la web
         const ticketsHtml = ticketArray.map(t => {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${t.id}`;
             const num = String(t.serial_number).padStart(4, '0');
+            const flyerUrl = 'https://jovenes.ipumexico.com/flyer.jpg'; // Usar URL absoluta pública para que cargue en correos
+            
             return `
-                <div style="border: 2px dashed #e11d48; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; background-color: #fce7f3; max-width: 350px; margin-left: auto; margin-right: auto;">
-                    <h2 style="margin: 0; color: #be123c;">BOLETO N° ${num}</h2>
-                    <p style="color: #4c1d95; text-transform: uppercase; font-weight: bold; margin-top: 5px;">Titular: ${t.owner_name}</p>
-                    <div style="background: white; display: inline-block; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #ccc;">
-                        <img src="${qrUrl}" width="200" height="200" alt="Boleto QR ${num}">
+                <div style="border: 2px dashed #ff5a55; border-radius: 15px; padding: 25px 20px; text-align: center; margin-bottom: 25px; background-color: #111111; max-width: 350px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.3); color: #ffffff; font-family: sans-serif;">
+                    <img src="${flyerUrl}" style="width: 100%; max-width: 310px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);" alt="Flyer Derramamiento">
+                    <h2 style="margin: 0; color: #ff5a55; font-family: Arial, sans-serif; letter-spacing: 1px; font-size: 20px; text-transform: uppercase;">BOLETO N° ${num}</h2>
+                    <p style="color: #3b8b8f; text-transform: uppercase; font-weight: bold; margin-top: 5px; font-size: 13px; letter-spacing: 0.5px;">Titular: ${t.owner_name}</p>
+                    <div style="background: white; display: inline-block; padding: 12px; border-radius: 10px; margin-top: 15px; border: 1px solid #ccc;">
+                        <img src="${qrUrl}" width="160" height="160" alt="Boleto QR ${num}">
                     </div>
-                    <p style="font-size: 12px; color: #666; margin-top: 15px;">Este código QR es único. Debes presentarlo en la entrada del evento para ser escaneado.</p>
+                    <p style="font-size: 11px; color: #aaaaaa; margin-top: 15px; line-height: 1.4;">Este código QR es único. Debes presentarlo en la entrada del evento para ser escaneado.</p>
                 </div>
             `;
         }).join('');
@@ -75,7 +78,7 @@ exports.handler = async (event, context) => {
                         </tr>
                     </table>
                     
-                    <p style="font-size: 12px; color: #718096; margin-top: 15px; line-height: 1.4;">⚠️ <strong>Importante:</strong> Una vez realizado el pago, envía tu comprobante a nuestro WhatsApp para activar tus boletos de inmediato. Una vez verificado tu pago, tus boletos QR quedarán activos en el sistema para el acceso al evento.</p>
+                    <p style="font-size: 12px; color: #718096; margin-top: 15px; line-height: 1.4;">⚠️ <strong>Importante:</strong> Una vez realizado el pago, envía tu comprobante a nuestro WhatsApp para activar tus boletos de inmediato. El día del evento **se solicitará una identificación física** en la entrada para validar que el nombre registrado coincida con el asistente. Una vez verificado tu pago, tus boletos QR quedarán activos en el sistema para el acceso al evento.</p>
                 </div>
 
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">

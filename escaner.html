@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner de Boletos - IPUM</title>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="shortcut icon" href="/favicon.ico?v=3" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="/site.webmanifest?v=3" />
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- HTML5 QRCode Scanner -->
@@ -381,7 +386,11 @@
                     throw new Error("Boleto no encontrado");
                 }
 
-                if (data.used === true) {
+                if (data.status !== 'paid') {
+                    box.classList.add('status-invalid');
+                    title.textContent = '🚫 PAGO PENDIENTE';
+                    details.innerHTML = `Boleto N° ${data.serial_number} apartado a nombre de: <b>${data.owner_name}</b>, pero **aún no ha sido pagado** o aprobado.`;
+                } else if (data.used === true) {
                     box.classList.add('status-used');
                     title.textContent = '❌ BOLETO YA UTILIZADO';
                     details.innerHTML = `El boleto #${data.serial_number} ya fue ingresado anteriormente.<br>A nombre de: ${data.owner_name}`;
