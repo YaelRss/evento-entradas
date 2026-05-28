@@ -42,16 +42,45 @@ exports.handler = async (event, context) => {
             `;
         }).join('');
 
+        const qty = ticketArray.length;
+        const totalAmount = qty * 250;
+
         const htmlEmail = `
         <div style="font-family: sans-serif; text-align: center; color: #333; padding: 20px; background-color: #f9fafb;">
             <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <h1 style="color: #e11d48; margin-bottom: 5px;">¡Gracias por tu registro!</h1>
+                <h1 style="color: #e11d48; margin-bottom: 5px;">¡Reserva Realizada!</h1>
                 <h3 style="color: #333; margin-top: 0;">Evento: Derramamiento</h3>
-                <p style="font-size: 16px;">Hola <strong>${ownerName}</strong>, tu compra ha sido procesada con éxito.</p>
-                <p>A continuación encontrarás tus boletos digitales. Puedes presentar este correo directamente desde tu celular en la puerta del evento.</p>
+                <p style="font-size: 16px; line-height: 1.5; color: #555;">Hola <strong>${ownerName}</strong>, tu reserva de <strong>${qty} boleto(s)</strong> ha sido registrada con éxito y tus accesos se encuentran apartados.</p>
                 
+                <div style="background-color: #fff5f5; border: 1px solid #feb2b2; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: left;">
+                    <h3 style="margin-top: 0; color: #c53030; border-bottom: 1px solid #feb2b2; padding-bottom: 8px;">💳 Instrucciones de Pago</h3>
+                    <p style="font-size: 15px; margin-bottom: 12px; color: #2d3748;">Por favor, realiza tu transferencia o depósito por un total de <strong style="color: #e11d48; font-size: 17px;">$${totalAmount}.00 MXN</strong>:</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
+                        <tr>
+                            <td style="padding: 6px 0; font-weight: bold; width: 140px;">Banco:</td>
+                            <td style="padding: 6px 0; color: #1a202c;">BBVA</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; font-weight: bold;">Número de Tarjeta:</td>
+                            <td style="padding: 6px 0; color: #1a202c; letter-spacing: 0.5px;">4152 3137 3308 0290</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; font-weight: bold;">Beneficiario:</td>
+                            <td style="padding: 6px 0; color: #1a202c;">Ángel Espinoza Salgado</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; font-weight: bold;">Concepto:</td>
+                            <td style="padding: 6px 0; color: #1a202c;">Boleto ${ownerName.substring(0, 15)}</td>
+                        </tr>
+                    </table>
+                    
+                    <p style="font-size: 12px; color: #718096; margin-top: 15px; line-height: 1.4;">⚠️ <strong>Importante:</strong> Una vez realizado el pago, envía tu comprobante a nuestro WhatsApp para activar tus boletos de inmediato. Una vez verificado tu pago, tus boletos QR quedarán activos en el sistema para el acceso al evento.</p>
+                </div>
+
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                 
+                <h3 style="color: #4a5568; margin-bottom: 15px;">Boletos Apartados:</h3>
                 ${ticketsHtml}
 
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
@@ -64,7 +93,7 @@ exports.handler = async (event, context) => {
         const mailOptions = {
             from: `"Venta de Boletos" <${process.env.GMAIL_USER}>`,
             to: ownerEmail,
-            subject: `Tus Boletos para DERRAMAMIENTO - N° ${String(ticketArray[0].serial_number).padStart(4, '0')}`,
+            subject: `Reserva de Boleto(s) para DERRAMAMIENTO - N° ${String(ticketArray[0].serial_number).padStart(4, '0')}`,
             html: htmlEmail
         };
 
