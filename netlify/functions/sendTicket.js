@@ -78,7 +78,7 @@ exports.handler = async (event, context) => {
                         </tr>
                     </table>
                     
-                    <p style="font-size: 12px; color: #718096; margin-top: 15px; line-height: 1.4;">⚠️ <strong>Importante:</strong> Una vez realizado el pago, envía tu comprobante a nuestro WhatsApp para activar tus boletos de inmediato. El día del evento **se solicitará una identificación física** en la entrada para validar que el nombre registrado coincida con el asistente. Una vez verificado tu pago, tus boletos QR quedarán activos en el sistema para el acceso al evento.</p>
+                    <p style="font-size: 12px; color: #718096; margin-top: 15px; line-height: 1.4;">⚠️ <strong>Importante:</strong> Una vez realizado el pago, envía tu comprobante a nuestro WhatsApp para activar tus boletos de inmediato. Si tu depósito o transferencia no se ve reflejado en un lapso máximo de <b>24 horas</b>, tu boleto no será validado en el sistema. El día del evento **se solicitará una identificación física** en la entrada para validar que el nombre registrado coincida con el asistente. Una vez verificado tu pago, tus boletos QR quedarán activos en el sistema para el acceso al evento.</p>
                 </div>
 
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">

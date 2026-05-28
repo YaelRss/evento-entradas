@@ -4,53 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Política de Cookies - Derramamiento</title>
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="shortcut icon" href="/favicon.ico?v=3" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="/site.webmanifest?v=3" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0d0e12;
+            --text-color: #f4f4f0;
+            --accent-fire: #ff5a55;
+            --accent-teal: #3b8b8f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d0e12;
-            color: #e2e8f0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
-            margin: 0;
-            padding: 2rem;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
         }
+
+        /* Fondo animado sutil */
+        .background-fx {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 10% 20%, rgba(59, 139, 143, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 90, 85, 0.08) 0%, transparent 40%);
+            z-index: -1;
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.03);
-            padding: 2rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2.5rem;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
+
         h1 {
-            color: #3b8b8f; /* --accent-teal */
+            color: var(--accent-teal);
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            margin-bottom: 1rem;
         }
+
         h2 {
-            color: #ff5a55; /* --accent-fire */
-            margin-top: 2rem;
+            color: var(--accent-fire);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
         }
+
+        p, ul {
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
         a {
-            color: #3b8b8f;
+            color: var(--accent-teal);
             text-decoration: none;
+            transition: color 0.3s ease;
         }
+
         a:hover {
-            text-decoration: underline;
+            color: var(--text-color);
         }
+
         .back-btn {
             display: inline-block;
             margin-bottom: 2rem;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             background: transparent;
-            border: 1px solid #3b8b8f;
-            color: #3b8b8f;
+            border: 1px solid var(--accent-teal);
+            color: var(--accent-teal);
             border-radius: 20px;
             text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
+
         .back-btn:hover {
             background: rgba(59, 139, 143, 0.1);
+            color: var(--text-color);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="background-fx"></div>
     <div class="container">
         <a href="index.html" class="back-btn">← Volver al Inicio</a>
         <h1>Política de Cookies</h1>
