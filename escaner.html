@@ -274,16 +274,38 @@
         const scannerContainer = document.getElementById('scanner-container');
         const loginError = document.getElementById('login-error');
 
+        // Lista de correos maestros autorizados
+        const MASTER_EMAILS = [
+            'prepayael@comunidad.unam.mx',
+            'yaelrosasdeveloper@gmail.com',
+            'jovenes@ipumexico.com',
+            'admin@ipumexico.com'
+        ];
+
+        function esCorreoMaestro(email) {
+            if (!email) return false;
+            return MASTER_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase());
+        }
+
         // FUNCIÓN DE LOGIN
         async function iniciarSesion() {
             if (!dbClient) return;
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-pass').value;
             const btn = document.querySelector('.login-form .btn');
             
             btn.textContent = 'Verificando...';
             btn.disabled = true;
             loginError.style.display = 'none';
+
+            // Verificación previa local
+            if (!esCorreoMaestro(email)) {
+                loginError.style.display = 'block';
+                loginError.textContent = 'Acceso Denegado: Este correo no está registrado como Correo Maestro.';
+                btn.textContent = 'Acceder';
+                btn.disabled = false;
+                return;
+            }
 
             const { data, error } = await dbClient.auth.signInWithPassword({
                 email: email,
@@ -312,6 +334,22 @@
             if (!dbClient) return false;
             const { data: { session } } = await dbClient.auth.getSession();
             if (session) {
+                const userEmail = session.user.email;
+                if (!esCorreoMaestro(userEmail)) {
+                    await dbClient.auth.signOut();
+                    loginContainer.style.display = 'block';
+                    scannerContainer.style.display = 'none';
+                    loginError.style.display = 'block';
+                    loginError.textContent = 'Acceso Denegado: Tu cuenta no tiene permisos de Administrador.';
+                    
+                    const btn = document.querySelector('.login-form .btn');
+                    if (btn) {
+                        btn.textContent = 'Acceder';
+                        btn.disabled = false;
+                    }
+                    return false;
+                }
+
                 // Usuario validado: Esconder Login, Mostrar Scanner
                 loginContainer.style.display = 'none';
                 scannerContainer.style.display = 'block';
