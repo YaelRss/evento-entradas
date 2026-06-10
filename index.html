@@ -1164,44 +1164,55 @@
             <h2 id="auth-title" style="margin-bottom: 1.5rem; color: var(--accent-teal);">Bienvenido</h2>
 
             <div class="ticket-form">
+                <div id="auth-form-wrapper">
+                    <div id="register-fields" style="display: none;">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="auth-nombre" placeholder="Tu nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellido</label>
+                            <input type="text" id="auth-apellido" placeholder="Tu apellido">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Nacimiento</label>
+                            <input type="date" id="auth-dob">
+                        </div>
+                    </div>
 
-                <div id="register-fields" style="display: none;">
                     <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" id="auth-nombre" placeholder="Tu nombre">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="auth-email" placeholder="tu@correo.com">
                     </div>
                     <div class="form-group">
-                        <label>Apellido</label>
-                        <input type="text" id="auth-apellido" placeholder="Tu apellido">
+                        <label>Contraseña</label>
+                        <input type="password" id="auth-password" placeholder="••••••••">
                     </div>
-                    <div class="form-group">
-                        <label>Fecha de Nacimiento</label>
-                        <input type="date" id="auth-dob">
+
+                    <div class="form-group" id="register-password-confirm" style="display: none;">
+                        <label>Confirmar Contraseña</label>
+                        <input type="password" id="auth-password-confirm" placeholder="••••••••">
                     </div>
+
+                    <div id="auth-error"
+                        style="color: #ff4444; font-size: 0.85rem; display: none; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; margin-bottom: 1rem;">
+                    </div>
+
+                    <button class="cta-button" id="btn-auth-action" onclick="submitAuth()"
+                        style="width: 100%; margin-bottom: 1rem;">Entrar</button>
+                    <button id="btn-auth-toggle" onclick="toggleAuthMode()"
+                        style="background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">¿No tienes cuenta? Regístrate aquí</button>
                 </div>
 
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="auth-email" placeholder="tu@correo.com">
+                <!-- Contenedor de Éxito de Registro -->
+                <div id="auth-success-container" style="display: none; text-align: center; padding: 1rem 0;">
+                    <div style="font-size: 4rem; color: #28a745; margin-bottom: 0.5rem; line-height: 1;">✓</div>
+                    <h3 style="color: #fff; margin-bottom: 1rem; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 1.4rem;">¡Registro Exitoso!</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; text-transform: none;">
+                        Te hemos enviado un correo de verificación. Por favor revisa tu bandeja de entrada o spam para validar tu cuenta antes de iniciar sesión.
+                    </p>
+                    <button type="button" class="cta-button" style="padding: 0.8rem 2rem; font-size: 1rem; width: 100%; border-radius: 8px;" onclick="showLoginAfterRegister()">Ir a Iniciar Sesión</button>
                 </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="auth-password" placeholder="••••••••">
-                </div>
-
-                <div class="form-group" id="register-password-confirm" style="display: none;">
-                    <label>Confirmar Contraseña</label>
-                    <input type="password" id="auth-password-confirm" placeholder="••••••••">
-                </div>
-
-                <div id="auth-error"
-                    style="color: #ff4444; font-size: 0.85rem; display: none; padding: 0.5rem; background: rgba(255, 68, 68, 0.1); border-radius: 5px; margin-bottom: 1rem;">
-                </div>
-
-                <button class="cta-button" id="btn-auth-action" onclick="submitAuth()"
-                    style="width: 100%; margin-bottom: 1rem;">Entrar</button>
-                <button id="btn-auth-toggle" onclick="toggleAuthMode()"
-                    style="background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">¿No tienes cuenta? Regístrate aquí</button>
             </div>
         </div>
     </div>
@@ -1313,6 +1324,11 @@
         function closeAuthModal() {
             document.getElementById('authModal').style.display = 'none';
             document.getElementById('auth-error').style.display = 'none';
+            
+            // Restablecer vistas por si se cerró en pantalla de éxito
+            document.getElementById('auth-success-container').style.display = 'none';
+            document.getElementById('auth-title').style.display = 'block';
+            document.getElementById('auth-form-wrapper').style.display = 'block';
         }
 
         // Registro de usuario
@@ -1367,9 +1383,23 @@
                 document.getElementById('auth-password').value = "";
                 document.getElementById('auth-password-confirm').value = "";
                 
-                alert("¡Registro exitoso! Te hemos enviado un correo de verificación. Por favor revisa tu bandeja de entrada o spam para verificar tu cuenta antes de iniciar sesión.");
-                toggleAuthMode(); // Cambiar a modo inicio de sesión
+                // Mostrar pantalla de éxito personalizada y ocultar el formulario
+                document.getElementById('auth-title').style.display = 'none';
+                document.getElementById('auth-form-wrapper').style.display = 'none';
+                document.getElementById('auth-success-container').style.display = 'block';
             }
+        }
+
+        function showLoginAfterRegister() {
+            // Ocultar pantalla de éxito y mostrar formulario
+            document.getElementById('auth-success-container').style.display = 'none';
+            document.getElementById('auth-title').style.display = 'block';
+            document.getElementById('auth-form-wrapper').style.display = 'block';
+            
+            // Forzar cambio a modo inicio de sesión
+            isLoginMode = false; // toggleAuthMode lo cambiará a true (login)
+            toggleAuthMode();
+        }
         }
 
         // Inicio de sesión
