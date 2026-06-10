@@ -219,6 +219,23 @@
             background: rgba(220, 53, 69, 0.2);
         }
 
+        .day-select-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        .day-select-btn.active-day {
+            background: var(--accent-blue);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(59, 139, 143, 0.3);
+        }
+
         #scanner-container {
             display: none;
         }
@@ -249,6 +266,12 @@
     </div>
 
     <div class="container" id="scanner-container">
+        <!-- Selector de Día del Evento -->
+        <div style="display: flex; gap: 10px; margin-bottom: 1.5rem; justify-content: center; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+            <button id="day1Btn" class="day-select-btn active-day" onclick="selectDay(1)" style="flex: 1; padding: 0.6rem;">Día 1</button>
+            <button id="day2Btn" class="day-select-btn" onclick="selectDay(2)" style="flex: 1; padding: 0.6rem;">Día 2</button>
+        </div>
+
         <div id="reader"></div>
         <button id="startBtn" class="btn" onclick="startScanner()">Iniciar Cámara</button>
 
@@ -377,6 +400,13 @@
 
         let html5QrcodeScanner;
         let isProcessing = false;
+        let activeDay = 1; // Día activo por defecto (1 o 2)
+
+        function selectDay(day) {
+            activeDay = day;
+            document.getElementById('day1Btn').classList.toggle('active-day', day === 1);
+            document.getElementById('day2Btn').classList.toggle('active-day', day === 2);
+        }
 
         function startScanner() {
             document.getElementById('startBtn').style.display = 'none';
@@ -442,24 +472,35 @@
                     box.classList.add('status-invalid');
                     title.textContent = '🚫 PAGO PENDIENTE';
                     details.innerHTML = `Boleto N° ${data.serial_number} apartado a nombre de: <b>${data.owner_name}</b>, pero **aún no ha sido pagado** o aprobado.`;
-                } else if (data.used === true) {
-                    box.classList.add('status-used');
-                    title.textContent = '❌ BOLETO YA UTILIZADO';
-                    details.innerHTML = `El boleto #${data.serial_number} ya fue ingresado anteriormente.<br>A nombre de: ${data.owner_name}`;
                 } else {
-                    // Marcar como usado
-                    const { error: updateError } = await dbClient
-                        .from('tickets')
-                        .update({ used: true })
-                        .eq('id', ticketId);
+                    const isUsedForDay = activeDay === 1 ? data.used_day1 : data.used_day2;
 
-                    if (updateError) {
-                        box.classList.add('status-invalid');
-                        title.textContent = '⚠️ Error actualizando base de datos';
+                    if (isUsedForDay === true) {
+                        box.classList.add('status-used');
+                        title.textContent = `❌ ACCESO YA UTILIZADO (DÍA ${activeDay})`;
+                        details.innerHTML = `El boleto #${data.serial_number} ya fue ingresado hoy para el Día ${activeDay}.<br>A nombre de: ${data.owner_name}`;
                     } else {
-                        box.classList.add('status-valid');
-                        title.textContent = '✅ ACCESO AUTORIZADO';
-                        details.innerHTML = `Boleto N° ${data.serial_number}<br>A nombre de: <b>${data.owner_name}</b>`;
+                        // Marcar como usado
+                        const updateData = { used: true };
+                        if (activeDay === 1) {
+                            updateData.used_day1 = true;
+                        } else {
+                            updateData.used_day2 = true;
+                        }
+
+                        const { error: updateError } = await dbClient
+                            .from('tickets')
+                            .update(updateData)
+                            .eq('id', ticketId);
+
+                        if (updateError) {
+                            box.classList.add('status-invalid');
+                            title.textContent = '⚠️ Error actualizando base de datos';
+                        } else {
+                            box.classList.add('status-valid');
+                            title.textContent = `✅ ACCESO DÍA ${activeDay} AUTORIZADO`;
+                            details.innerHTML = `Boleto N° ${data.serial_number}<br>A nombre de: <b>${data.owner_name}</b>`;
+                        }
                     }
                 }
             } catch (err) {
