@@ -1340,6 +1340,7 @@
 
             const btn = document.getElementById('btn-auth-action');
             btn.textContent = "Registrando...";
+            btn.disabled = true;
 
             const { data, error } = await dbClient.auth.signUp({ 
                 email, 
@@ -1353,6 +1354,8 @@
                     }
                 }
             });
+
+            btn.disabled = false;
 
             if (error) {
                 errorDiv.textContent = "Error: " + error.message;
@@ -1383,7 +1386,10 @@
             }
 
             btn.textContent = "Entrando...";
+            btn.disabled = true;
             const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+
+            btn.disabled = false;
 
             if (error) {
                 errorDiv.textContent = "Error: " + error.message;
@@ -1739,15 +1745,6 @@
                     throw new Error("No se devolvieron los boletos. Revisa las políticas RLS de Supabase.");
                 }
 
-                // Flujo tradicional para OXXO y SPEI
-                // Llamar en el fondo a nuestra Netlify Function para enviar el correo (no bloquea la UI)
-                fetch('/.netlify/functions/sendTicket', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketArray: data })
-                }).then(res => res.json()).then(result => console.log('Envío correo:', result))
-                    .catch(err => console.error("Error al pedir envío de correo:", err));
-
                 // Generar la interfaz web inmediatamente
                 showQRTickets(data);
 
@@ -1956,24 +1953,7 @@
             return (hash % 90) + 10; // De 10 a 99
         }
 
-        // Limpiar boletos pendientes que tienen más de 24 horas de creados
-        async function cleanExpiredTickets() {
-            if (!dbClient) return;
-            try {
-                const expiryLimit = new Date();
-                expiryLimit.setHours(expiryLimit.getHours() - 24);
 
-                const { error } = await dbClient
-                    .from('tickets')
-                    .delete()
-                    .eq('status', 'pending')
-                    .lt('created_at', expiryLimit.toISOString());
-
-                if (error) console.error("Error al limpiar boletos expirados:", error);
-            } catch (err) {
-                console.error("Excepción al limpiar boletos:", err);
-            }
-        }
 
         // Inicializar
         window.onload = async function () {
@@ -1985,7 +1965,6 @@
                     document.getElementById('cookieBanner').style.display = 'flex';
                 }, 1500);
             }
-            await cleanExpiredTickets();
             updateTicketDisplay();
         }
     </script>

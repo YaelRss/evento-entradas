@@ -451,24 +451,7 @@
 
         let currentUserEmail = null;
 
-        // Limpiar boletos pendientes que tienen más de 24 horas de creados
-        async function cleanExpiredTickets() {
-            if (!dbClient) return;
-            try {
-                const expiryLimit = new Date();
-                expiryLimit.setHours(expiryLimit.getHours() - 24);
 
-                const { error } = await dbClient
-                    .from('tickets')
-                    .delete()
-                    .eq('status', 'pending')
-                    .lt('created_at', expiryLimit.toISOString());
-
-                if (error) console.error("Error al limpiar boletos expirados:", error);
-            } catch (err) {
-                console.error("Excepción al limpiar boletos:", err);
-            }
-        }
 
         async function init() {
             const loader = document.getElementById('loading-indicator');
@@ -480,7 +463,6 @@
             }
 
             try {
-                await cleanExpiredTickets();
                 // Intento 1: leer sesión directamente
                 let { data: { session } } = await dbClient.auth.getSession();
 
