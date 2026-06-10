@@ -40,16 +40,182 @@
             min-height: 100vh;
         }
 
-        /* Fondo animado */
+        /* Fondo Animado Premium (Efecto de fuego espiritual y brasas flotantes) */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* Orbes de brillo ambiental de fondo */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.22;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--accent-teal) 0%, transparent 70%);
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+
+        .glow-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, var(--accent-fire) 0%, transparent 70%);
+            animation: drift 30s infinite alternate-reverse ease-in-out;
+        }
+
+        .glow-3 {
+            top: 40%;
+            left: 50%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(255, 90, 85, 0.15) 0%, transparent 70%);
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(8%, 10%) scale(1.2);
+            }
+        }
+
+        /* Contenedor de chispas */
+        .sparks-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        /* Chispas flotantes animadas */
+        .spark {
+            position: absolute;
+            bottom: -50px;
+            border-radius: 50%;
+            background: linear-gradient(to top, rgba(255, 90, 85, 0.8), rgba(255, 140, 50, 0.4));
+            box-shadow: 0 0 10px rgba(255, 90, 85, 0.8), 0 0 20px rgba(255, 140, 50, 0.4);
+            animation: float-up infinite linear;
+            opacity: 0;
+        }
+
+        /* Configuración individual de chispas */
+        .spark-1 {
+            width: 8px;
+            height: 8px;
+            left: 15%;
+            animation-duration: 12s;
+            animation-delay: 0s;
+        }
+
+        .spark-2 {
+            width: 12px;
+            height: 12px;
+            left: 35%;
+            animation-duration: 16s;
+            animation-delay: 2s;
+            background: linear-gradient(to top, rgba(255, 90, 85, 0.9), rgba(255, 190, 80, 0.5));
+        }
+
+        .spark-3 {
+            width: 6px;
+            height: 6px;
+            left: 55%;
+            animation-duration: 10s;
+            animation-delay: 4s;
+        }
+
+        .spark-4 {
+            width: 14px;
+            height: 14px;
+            left: 75%;
+            animation-duration: 20s;
+            animation-delay: 1s;
+            box-shadow: 0 0 15px rgba(255, 90, 85, 0.8);
+        }
+
+        .spark-5 {
+            width: 8px;
+            height: 8px;
+            left: 25%;
+            animation-duration: 14s;
+            animation-delay: 6s;
+        }
+
+        .spark-6 {
+            width: 10px;
+            height: 10px;
+            left: 45%;
+            animation-duration: 18s;
+            animation-delay: 8s;
+        }
+
+        .spark-7 {
+            width: 6px;
+            height: 6px;
+            left: 65%;
+            animation-duration: 12s;
+            animation-delay: 3s;
+        }
+
+        .spark-8 {
+            width: 12px;
+            height: 12px;
+            left: 85%;
+            animation-duration: 15s;
+            animation-delay: 5s;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-110vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Overlay oscuro y tintado para legibilidad */
         .background-fx {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle at 20% 30%, rgba(59, 139, 143, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(255, 90, 85, 0.15) 0%, transparent 40%);
+            background: linear-gradient(to bottom, rgba(13, 14, 18, 0.4) 0%, rgba(13, 14, 18, 0.95) 100%),
+                radial-gradient(circle at 20% 30%, rgba(59, 139, 143, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 90, 85, 0.2) 0%, transparent 40%);
             z-index: -1;
+            pointer-events: none;
             animation: breathe 10s infinite alternate;
         }
 
@@ -693,6 +859,15 @@
                 transform: translateY(-10px);
             }
         }
+
+        /* Forzar apilamiento superior para todo el contenido interactivo y evitar bloqueo del video */
+        header,
+        .details-section,
+        .map-section,
+        .resources-section,
+        footer {
+            z-index: 10 !important;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -700,6 +875,23 @@
 
 <body>
 
+    <!-- Fondo animado premium (Efecto de fuego espiritual y brasas flotantes) -->
+    <div class="animated-bg">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+        <div class="glow-orb glow-3"></div>
+        
+        <div class="sparks-container">
+            <div class="spark spark-1"></div>
+            <div class="spark spark-2"></div>
+            <div class="spark spark-3"></div>
+            <div class="spark spark-4"></div>
+            <div class="spark spark-5"></div>
+            <div class="spark spark-6"></div>
+            <div class="spark spark-7"></div>
+            <div class="spark spark-8"></div>
+        </div>
+    </div>
     <div class="background-fx"></div>
 
     <header class="container">
@@ -712,8 +904,8 @@
                 onclick="openAuthModal(event)">Iniciar Sesión / Registro</button>
             <div id="user-info" style="display: none; align-items: center; gap: 10px;">
                 <span id="user-email" style="color: var(--accent-teal); font-size: 0.8rem; display: none;"></span>
-                <button onclick="loadMyTickets()"
-                    style="background: transparent; border: 1px solid var(--accent-teal); border-radius: 20px; color: var(--accent-teal); cursor: pointer; font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='rgba(59, 139, 143, 0.1)'" onmouseout="this.style.background='transparent'">🎟 Mis Boletos</button>
+                <a href="mis-boletos.html"
+                    style="background: transparent; border: 1px solid var(--accent-teal); border-radius: 20px; color: var(--accent-teal); cursor: pointer; font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='rgba(59, 139, 143, 0.1)'" onmouseout="this.style.background='transparent'">🎟 Mis Boletos</a>
                 <button onclick="handleSignOut()"
                     style="background: transparent; border: 1px solid var(--accent-fire); border-radius: 20px; color: var(--accent-fire); cursor: pointer; font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='rgba(255, 90, 85, 0.1)'" onmouseout="this.style.background='transparent'">Cerrar Sesión</button>
             </div>
@@ -814,6 +1006,7 @@
                 loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </section>
+
 
     <section class="resources-section container">
         <h2 class="section-title">Recursos Útiles</h2>
@@ -1063,6 +1256,12 @@
             const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZnVtbmhldGFzdndoZmtnbWFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE4MzUsImV4cCI6MjA5MDgxNzgzNX0.5VCYnoiT2hOMt6L5TLoRn6Xq1NleQ8-uzEN1WxitVZQ';
             if (window.supabase) {
                 dbClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+                
+                // Suscribirse a cambios de estado de autenticación en tiempo real
+                dbClient.auth.onAuthStateChange((event, session) => {
+                    console.log("Cambio en estado Auth:", event, session);
+                    checkUserSession();
+                });
             }
         } catch (err) {
             console.error("Supabase error de inicialización:", err);
@@ -1146,6 +1345,7 @@
                 email, 
                 password,
                 options: {
+                    redirectTo: window.location.origin,
                     data: {
                         first_name: nombre,
                         last_name: apellido,
@@ -1225,6 +1425,12 @@
                 } else {
                     if (loginBtn) loginBtn.style.display = 'inline-block';
                     if (userInfo) userInfo.style.display = 'none';
+                    
+                    const emailInput = document.getElementById('email');
+                    if (emailInput) {
+                        emailInput.value = '';
+                        emailInput.readOnly = false;
+                    }
                 }
             } catch (err) {
                 console.error("Error validando sesión:", err);
@@ -1452,7 +1658,7 @@
 
             const qty = parseInt(document.getElementById('quantity').value);
             const name = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const method = document.getElementById('paymentMethod').value;
 
             if (!name || !email) {
@@ -1562,36 +1768,7 @@
             btn.disabled = false;
         }
 
-        async function loadMyTickets() {
-            if (!dbClient) return;
-            const { data: { session }, error } = await dbClient.auth.getSession();
-            if (!session || error) {
-                openAuthModal();
-                return;
-            }
-            try {
-                const btn = document.querySelector('button[onclick="loadMyTickets()"]');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = 'Cargando...';
-                btn.disabled = true;
 
-                const { data, error: dbError } = await dbClient.from('tickets').select('*').eq('owner_email', session.user.email);
-                
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-
-                if (dbError) throw dbError;
-                if (!data || data.length === 0) {
-                    alert('Aún no tienes boletos registrados.');
-                    return;
-                }
-                
-                showQRTickets(data);
-            } catch (err) {
-                console.error("Error al cargar mis boletos:", err);
-                alert("Error al cargar boletos: " + err.message);
-            }
-        }
 
         function showQRTickets(tickets) {
             closeModal(); // Cerrar formulario
@@ -1617,22 +1794,45 @@
             if (hasPending) {
                 const qty = pendingTickets.length;
                 const totalAmount = qty * 250;
-                const whatsappMsg = encodeURIComponent(`Hola! Tengo ${qty} boleto(s) pendiente(s) para el evento "Derramamiento" por un saldo de $${totalAmount} MXN.\n\n*Datos de Registro:*\n- Correo: ${tickets[0].owner_email}\n\nAquí adjunto mi comprobante de pago.`);
+                const email = tickets[0].owner_email;
+                const userCode = generateUserCode(email);
+                const cents = generateUserCents(email);
+                const totalAmountWithCents = totalAmount + (cents / 100);
+
+                const whatsappMsg = encodeURIComponent(`🎟 *Pago de Boleto - Derramamiento*\n\n*Código de pago (SPEI):* ${userCode}\n*Monto de depósito (OXXO/Banco):* $${totalAmountWithCents.toFixed(2)} MXN\n*Correo registrado:* ${email}\n\nAquí adjunto mi comprobante de pago.`);
                 
                 html += `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255, 90, 85, 0.3); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem; text-align: left; font-size: 0.9rem; line-height: 1.5;">
                         <h3 style="color: var(--accent-fire); margin-bottom: 1rem; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">💳 Instrucciones de Pago</h3>
                         
-                        <p style="margin-bottom: 0.8rem; color: #fff;">Realiza tu transferencia o depósito por tu saldo de <strong style="color: var(--accent-fire); font-size: 1.1rem;">$${totalAmount}.00 MXN</strong>:</p>
+                        <p style="margin-bottom: 0.8rem; color: #fff;">Realiza tu pago por tu saldo de <strong style="color: var(--accent-fire); font-size: 1.1rem;">$${totalAmount}.00 MXN</strong>:</p>
                         
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <!-- Datos de Cuenta -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
                             <div><strong style="color: var(--accent-teal);">Banco:</strong> <span style="color: #fff;">BBVA</span></div>
                             <div><strong style="color: var(--accent-teal);">Número de Tarjeta:</strong> <span style="color: #fff; letter-spacing: 1px;">4152 3137 3308 0290</span></div>
                             <div><strong style="color: var(--accent-teal);">Beneficiario:</strong> <span style="color: #fff;">Ángel Espinoza Salgado</span></div>
-                            <div><strong style="color: var(--accent-teal);">Concepto:</strong> <span style="color: #fff;">Pago Boletos ${tickets[0].owner_email.split('@')[0]}</span></div>
                         </div>
-                        
-                        <p style="color: #ccc; margin-bottom: 1.2rem; font-size: 0.85rem;">⚠️ <strong>Nota:</strong> Envía tu comprobante de pago haciendo clic en el botón de abajo para activar y recibir tus accesos QR de inmediato.</p>
+
+                        <!-- Opción A: SPEI -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.8rem; font-size: 0.8rem;">
+                            <span style="color: var(--accent-fire); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">📱 Opción A: Transferencia (SPEI)</span>
+                            Escribe este concepto exacto: <strong style="color: #fff; font-family: monospace; font-size: 1rem; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; letter-spacing: 1px;">${userCode}</strong>
+                        </div>
+
+                        <!-- Opción B: Depósito -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.8rem;">
+                            <span style="color: var(--accent-teal); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 0.3rem;">💵 Opción B: Depósito (OXXO/Practicaja)</span>
+                            Deposita la cantidad exacta con centavos: <strong style="color: #fff; font-family: monospace; font-size: 1rem; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px;">$${totalAmountWithCents.toFixed(2)} MXN</strong>
+                            <p style="color: #ffb74d; font-size: 0.7rem; margin-top: 0.4rem; line-height: 1.3; margin-bottom: 0;">
+                                ⚠️ <em>Pide al cajero de OXXO registrar los centavos exactos. Si lo redondean a $${totalAmount}.00, no te preocupes, al enviarnos tu ticket por WhatsApp te lo activaremos.</em>
+                            </p>
+                        </div>
+
+                        <!-- Límite de Reserva -->
+                        <div style="background: rgba(255,90,85,0.08); border: 1px solid rgba(255,90,85,0.2); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.2rem; font-size: 0.78rem; color: #ff8c88; line-height: 1.4;">
+                            🕒 <strong>Límite de tiempo:</strong> Tu reserva expira automáticamente en <strong>24 horas</strong>. Realiza tu pago y envía tu comprobante antes de que venza para no perder tus accesos.
+                        </div>
                         
                         <a href="https://wa.me/522294734067?text=${whatsappMsg}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25d366; color: #fff; font-weight: 700; text-transform: uppercase; padding: 0.8rem; border-radius: 30px; text-decoration: none; text-align: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
@@ -1688,8 +1888,13 @@
                     instr.innerText = "Sube tu comprobante para activar.";
                     overlay.appendChild(instr);
                 } else {
+                    const activeBadge = document.createElement('div');
+                    activeBadge.style = 'background: #28a745; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.8rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(40,167,69,0.4); border: 1px solid rgba(255,255,255,0.25); letter-spacing: 0.5px;';
+                    activeBadge.innerHTML = '<span>✓</span> Acceso Activo';
+                    overlay.appendChild(activeBadge);
+
                     const qrBorder = document.createElement('div');
-                    qrBorder.style = 'background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+                    qrBorder.style = 'background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
                     const qrDiv = document.createElement('div');
                     qrBorder.appendChild(qrDiv);
                     overlay.appendChild(qrBorder);
@@ -1702,6 +1907,11 @@
                         colorLight: "#ffffff",
                         correctLevel: QRCode.CorrectLevel.H
                     });
+
+                    const activeMsg = document.createElement('p');
+                    activeMsg.style = 'font-size: 0.75rem; color: #a8ffb2; margin-bottom: 0.8rem; font-weight: 600; text-shadow: 0 0 10px rgba(40,167,69,0.3);';
+                    activeMsg.innerText = 'Boleto válido para el día del evento';
+                    overlay.appendChild(activeMsg);
                 }
 
                 const owner = document.createElement('p');
@@ -1720,8 +1930,53 @@
             localStorage.setItem('cookiesAccepted', 'true');
         }
 
+        // Generadores de códigos y centavos de pago únicos
+        function generateUserCode(email) {
+            let hash = 5381;
+            for (let i = 0; i < email.length; i++) {
+                hash = ((hash << 5) + hash) ^ email.charCodeAt(i);
+                hash = hash & 0x7fffffff;
+            }
+            const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            let code = 'DER-';
+            let num = hash;
+            for (let i = 0; i < 6; i++) {
+                code += chars[num % chars.length];
+                num = Math.floor(num / chars.length);
+            }
+            return code;
+        }
+
+        function generateUserCents(email) {
+            let hash = 5381;
+            for (let i = 0; i < email.length; i++) {
+                hash = ((hash << 5) + hash) ^ email.charCodeAt(i);
+                hash = hash & 0x7fffffff;
+            }
+            return (hash % 90) + 10; // De 10 a 99
+        }
+
+        // Limpiar boletos pendientes que tienen más de 24 horas de creados
+        async function cleanExpiredTickets() {
+            if (!dbClient) return;
+            try {
+                const expiryLimit = new Date();
+                expiryLimit.setHours(expiryLimit.getHours() - 24);
+
+                const { error } = await dbClient
+                    .from('tickets')
+                    .delete()
+                    .eq('status', 'pending')
+                    .lt('created_at', expiryLimit.toISOString());
+
+                if (error) console.error("Error al limpiar boletos expirados:", error);
+            } catch (err) {
+                console.error("Excepción al limpiar boletos:", err);
+            }
+        }
+
         // Inicializar
-        window.onload = function () {
+        window.onload = async function () {
             if (localStorage.getItem('cookiesAccepted') === 'true') {
                 document.getElementById('cookieBanner').style.display = 'none';
             } else {
@@ -1730,6 +1985,7 @@
                     document.getElementById('cookieBanner').style.display = 'flex';
                 }, 1500);
             }
+            await cleanExpiredTickets();
             updateTicketDisplay();
         }
     </script>

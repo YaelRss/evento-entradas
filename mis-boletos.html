@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Boletos - Derramamiento IPUM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="shortcut icon" href="/favicon.ico?v=3" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="/site.webmanifest?v=3" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --text-color: #f4f4f0;
+            --accent-fire: #ff5a55;
+            --accent-teal: #3b8b8f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fondo Animado Premium (Efecto de fuego espiritual y brasas flotantes) */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* Orbes de brillo ambiental de fondo */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.22;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--accent-teal) 0%, transparent 70%);
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+
+        .glow-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, var(--accent-fire) 0%, transparent 70%);
+            animation: drift 30s infinite alternate-reverse ease-in-out;
+        }
+
+        .glow-3 {
+            top: 40%;
+            left: 50%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(255, 90, 85, 0.15) 0%, transparent 70%);
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(8%, 10%) scale(1.2);
+            }
+        }
+
+        /* Contenedor de chispas */
+        .sparks-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        /* Chispas flotantes animadas */
+        .spark {
+            position: absolute;
+            bottom: -50px;
+            border-radius: 50%;
+            background: linear-gradient(to top, rgba(255, 90, 85, 0.8), rgba(255, 140, 50, 0.4));
+            box-shadow: 0 0 10px rgba(255, 90, 85, 0.8), 0 0 20px rgba(255, 140, 50, 0.4);
+            animation: float-up infinite linear;
+            opacity: 0;
+        }
+
+        /* Configuración individual de chispas */
+        .spark-1 {
+            width: 8px;
+            height: 8px;
+            left: 15%;
+            animation-duration: 12s;
+            animation-delay: 0s;
+        }
+
+        .spark-2 {
+            width: 12px;
+            height: 12px;
+            left: 35%;
+            animation-duration: 16s;
+            animation-delay: 2s;
+            background: linear-gradient(to top, rgba(255, 90, 85, 0.9), rgba(255, 190, 80, 0.5));
+        }
+
+        .spark-3 {
+            width: 6px;
+            height: 6px;
+            left: 55%;
+            animation-duration: 10s;
+            animation-delay: 4s;
+        }
+
+        .spark-4 {
+            width: 14px;
+            height: 14px;
+            left: 75%;
+            animation-duration: 20s;
+            animation-delay: 1s;
+            box-shadow: 0 0 15px rgba(255, 90, 85, 0.8);
+        }
+
+        .spark-5 {
+            width: 8px;
+            height: 8px;
+            left: 25%;
+            animation-duration: 14s;
+            animation-delay: 6s;
+        }
+
+        .spark-6 {
+            width: 10px;
+            height: 10px;
+            left: 45%;
+            animation-duration: 18s;
+            animation-delay: 8s;
+        }
+
+        .spark-7 {
+            width: 6px;
+            height: 6px;
+            left: 65%;
+            animation-duration: 12s;
+            animation-delay: 3s;
+        }
+
+        .spark-8 {
+            width: 12px;
+            height: 12px;
+            left: 85%;
+            animation-duration: 15s;
+            animation-delay: 5s;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-110vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Overlay oscuro y tintado para legibilidad */
+        .background-fx {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(13, 14, 18, 0.4) 0%, rgba(13, 14, 18, 0.95) 100%),
+                radial-gradient(circle at 20% 30%, rgba(59, 139, 143, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 90, 85, 0.2) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+            animation: breathe 10s infinite alternate;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        header {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .church-name {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+        }
+
+        h1.title {
+            font-family: 'Anton', sans-serif;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .back-button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: #1a1c23;
+            border: 1px solid rgba(255, 90, 85, 0.2);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-btn:hover { color: #fff; }
+
+        /* Forzar apilamiento superior para todo el contenido interactivo y evitar bloqueo del video */
+        header, main {
+            position: relative;
+            z-index: 10 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fondo animado premium (Efecto de fuego espiritual y brasas flotantes) -->
+    <div class="animated-bg">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+        <div class="glow-orb glow-3"></div>
+        
+        <div class="sparks-container">
+            <div class="spark spark-1"></div>
+            <div class="spark spark-2"></div>
+            <div class="spark spark-3"></div>
+            <div class="spark spark-4"></div>
+            <div class="spark spark-5"></div>
+            <div class="spark spark-6"></div>
+            <div class="spark spark-7"></div>
+            <div class="spark spark-8"></div>
+        </div>
+    </div>
+    <div class="background-fx"></div>
+
+    <header class="container">
+        <div class="logo-area">
+            <span class="church-name">Evento de Jóvenes IPUM</span>
+            <h1 class="title">Derramamiento</h1>
+        </div>
+        <a href="index.html" class="back-button">← Volver al inicio</a>
+    </header>
+
+    <main class="container" style="flex-grow: 1; padding-bottom: 4rem;">
+        <h2 class="section-title">🎟 Mis Boletos Adquiridos</h2>
+        <p style="color: #aaa; text-align: center; margin-bottom: 3rem; font-size: 1rem;">
+            Aquí puedes ver el estado en tiempo real de tus accesos para el evento.
+        </p>
+        
+        <!-- Estado: cargando -->
+        <div id="loading-indicator" style="text-align: center; margin-top: 3rem; color: var(--accent-teal);">
+            ⏳ Verificando sesión...
+        </div>
+
+        <!-- Estado: no logueado -->
+        <div id="not-logged-in" style="display:none; text-align: center; padding: 3rem 2rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 20px; max-width: 480px; margin: 2rem auto;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+            <h3 style="color: var(--text-color); margin-bottom: 0.8rem; font-family: 'Anton', sans-serif; text-transform: uppercase;">Inicia Sesión</h3>
+            <p style="color: #aaa; margin-bottom: 2rem; font-size: 0.95rem;">Necesitas iniciar sesión para ver tus boletos.</p>
+            <a href="index.html" style="background: linear-gradient(45deg, var(--accent-fire), #ff2a25); color: #fff; padding: 0.8rem 2rem; border-radius: 30px; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.9rem; display: inline-block;">Ir a Iniciar Sesión</a>
+        </div>
+
+        <div id="my-tickets-grid" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: stretch;">
+            <!-- Se llenará dinámicamente por JavaScript -->
+        </div>
+    </main>
+
+    <!-- Modal de Instrucciones de Pago -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+            <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+            <h2 style="color: var(--accent-fire); margin-bottom: 1rem; font-family: 'Anton', sans-serif; letter-spacing: 1px; text-transform: uppercase;">💳 Continuar Pago</h2>
+            <p style="margin-bottom: 1.5rem; color: #ccc; font-size: 0.95rem;">Realiza tu pago por el saldo de este boleto (<strong style="color: var(--accent-fire);">$250.00 MXN</strong>).</p>
+            
+            <!-- Datos de Cuenta -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                <div><strong style="color: var(--accent-teal);">Banco:</strong> <span style="color: #fff;">BBVA</span></div>
+                <div><strong style="color: var(--accent-teal);">Número de Tarjeta:</strong> <span style="color: #fff; letter-spacing: 1px;">4152 3137 3308 0290</span></div>
+                <div><strong style="color: var(--accent-teal);">Beneficiario:</strong> <span style="color: #fff;">Ángel Espinoza Salgado</span></div>
+            </div>
+
+            <!-- OPCIÓN A: Transferencia SPEI -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem;">
+                <p style="color: var(--accent-fire); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 5px;">
+                    📱 Opción A: Transferencia (SPEI)
+                </p>
+                <p style="color: #ccc; font-size: 0.82rem; margin-bottom: 0.6rem;">Escribe este código exacto en el campo de <strong>Concepto / Motivo de Pago</strong>:</p>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid rgba(255,90,85,0.2);">
+                    <span id="user-pay-code" style="font-family: 'Anton', monospace; font-size: 1.3rem; color: var(--accent-fire); letter-spacing: 2px;"></span>
+                    <button onclick="copyUserCode()" title="Copiar concepto" style="background: rgba(255,90,85,0.2); border: 1px solid var(--accent-fire); color: var(--accent-fire); border-radius: 8px; padding: 0.3rem 0.7rem; font-size: 0.75rem; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,90,85,0.35)'" onmouseout="this.style.background='rgba(255,90,85,0.2)'">
+                        📋 Copiar Concepto
+                    </button>
+                </div>
+            </div>
+
+            <!-- OPCIÓN B: Depósito en OXXO / Practicaja / Ventanilla -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem;">
+                <p style="color: var(--accent-teal); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 5px;">
+                    💵 Opción B: Depósito (OXXO, Practicaja, Ventanilla)
+                </p>
+                <p style="color: #ccc; font-size: 0.82rem; margin-bottom: 0.6rem;">Deposita la <strong>cantidad exacta con centavos únicos</strong> para identificar tu pago:</p>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid rgba(59,139,143,0.3);">
+                    <span id="user-pay-cents-amount" style="font-family: 'Anton', monospace; font-size: 1.3rem; color: var(--accent-teal); letter-spacing: 1px;"></span>
+                    <button onclick="copyCentsAmount()" title="Copiar cantidad" style="background: rgba(59,139,143,0.2); border: 1px solid var(--accent-teal); color: var(--accent-teal); border-radius: 8px; padding: 0.3rem 0.7rem; font-size: 0.75rem; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(59,139,143,0.35)'" onmouseout="this.style.background='rgba(59,139,143,0.2)'">
+                        📋 Copiar Cantidad
+                    </button>
+                </div>
+                <p style="color: #aaa; font-size: 0.72rem; margin-top: 0.6rem; line-height: 1.4; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 0.6rem; margin-bottom: 0.4rem;">
+                    💡 <em>Como OXXO y Practicajas no permiten escribir conceptos de texto, estos centavos únicos son la clave para que sepamos al instante que el depósito es tuyo.</em>
+                </p>
+                <p style="color: #ffb74d; font-size: 0.72rem; line-height: 1.4; margin-top: 0.3rem;">
+                    ⚠️ <strong>Dile al cajero de OXXO que registre la cantidad exacta con centavos</strong> (el sistema de OXXO sí lo acepta). Si aun así lo redondean a $250.00, no te preocupes: al enviarnos tu comprobante por WhatsApp te lo activaremos sin problema.
+                </p>
+            </div>
+            
+            <p style="color: #ccc; margin-bottom: 1.2rem; font-size: 0.85rem;">⚠️ <strong>Importante:</strong> Envía tu comprobante de pago por WhatsApp para que podamos activar tu acceso QR de inmediato.</p>
+            
+            <a id="whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25d366; color: #fff; font-weight: 700; text-transform: uppercase; padding: 0.8rem; border-radius: 30px; text-decoration: none; text-align: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Enviar Comprobante
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://kefumnhetasvwhfkgmab.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZnVtbmhldGFzdndoZmtnbWFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE4MzUsImV4cCI6MjA5MDgxNzgzNX0.5VCYnoiT2hOMt6L5TLoRn6Xq1NleQ8-uzEN1WxitVZQ";
+        const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUserEmail = null;
+
+        // Limpiar boletos pendientes que tienen más de 24 horas de creados
+        async function cleanExpiredTickets() {
+            if (!dbClient) return;
+            try {
+                const expiryLimit = new Date();
+                expiryLimit.setHours(expiryLimit.getHours() - 24);
+
+                const { error } = await dbClient
+                    .from('tickets')
+                    .delete()
+                    .eq('status', 'pending')
+                    .lt('created_at', expiryLimit.toISOString());
+
+                if (error) console.error("Error al limpiar boletos expirados:", error);
+            } catch (err) {
+                console.error("Excepción al limpiar boletos:", err);
+            }
+        }
+
+        async function init() {
+            const loader = document.getElementById('loading-indicator');
+            const notLoggedIn = document.getElementById('not-logged-in');
+
+            function showNotLoggedIn() {
+                loader.style.display = 'none';
+                notLoggedIn.style.display = 'block';
+            }
+
+            try {
+                await cleanExpiredTickets();
+                // Intento 1: leer sesión directamente
+                let { data: { session } } = await dbClient.auth.getSession();
+
+                // Si no hay sesión en el primer intento, esperar 800ms y reintentar
+                // (Supabase necesita un momento para hidatar la sesión del localStorage en algunas versiones)
+                if (!session) {
+                    await new Promise(r => setTimeout(r, 800));
+                    const retry = await dbClient.auth.getSession();
+                    session = retry.data.session;
+                }
+
+                if (!session) {
+                    // Definitivamente no hay sesión
+                    showNotLoggedIn();
+                    return;
+                }
+
+                // Hay sesión — cargar boletos
+                currentUserEmail = session.user.email;
+                await fetchAndRenderTickets(currentUserEmail);
+
+            } catch (err) {
+                console.error('Error validando sesión:', err);
+                showNotLoggedIn();
+            }
+        }
+
+        async function fetchAndRenderTickets(email) {
+            const ticketsGrid = document.getElementById('my-tickets-grid');
+            const loader = document.getElementById('loading-indicator');
+
+            try {
+                const { data, error } = await dbClient
+                    .from('tickets')
+                    .select('*')
+                    .ilike('owner_email', email);
+
+                loader.style.display = 'none';
+
+                if (error) {
+                    console.error("Error al cargar boletos:", error);
+                    ticketsGrid.innerHTML = `<p style="color: var(--accent-fire); text-align: center;">Hubo un error al cargar tus boletos. Por favor, intenta de nuevo más tarde.</p>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    ticketsGrid.innerHTML = `
+                        <div style="text-align: center; color: #888; padding: 3rem 2rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 15px; width: 100%; max-width: 500px; margin: 2rem auto;">
+                            <p style="font-size: 1.2rem; margin-bottom: 1rem; color: #bbb;">🎟 Aún no tienes boletos registrados</p>
+                            <p style="font-size: 0.9rem; color: #888; margin-bottom: 2rem;">Adquiere tus accesos hoy mismo antes de que se agoten.</p>
+                            <a href="index.html#comprar" style="background: var(--accent-fire); color: #fff; padding: 0.8rem 1.5rem; border-radius: 20px; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.85rem;">Adquirir Entrada</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                ticketsGrid.innerHTML = '';
+
+                data.forEach(ticket => {
+                    const isTicketPending = ticket.status === 'pending';
+                    const ticketCard = document.createElement('div');
+
+                    ticketCard.style = `
+                        background: #111 url('flyer.jpg') no-repeat center center;
+                        background-size: cover;
+                        border: 2px solid ${isTicketPending ? 'var(--accent-fire)' : 'rgba(40,167,69,0.5)'};
+                        border-radius: 15px;
+                        color: #fff;
+                        text-align: center;
+                        width: 100%;
+                        max-width: 320px;
+                        height: 500px;
+                        overflow: hidden;
+                        box-shadow: 0 15px 35px ${isTicketPending ? 'rgba(255, 90, 85, 0.3)' : 'rgba(40,167,69,0.2)'};
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-end;
+                        filter: ${isTicketPending ? 'grayscale(0.2)' : 'none'};
+                        transition: transform 0.3s ease;
+                    `;
+                    
+                    ticketCard.onmouseover = () => ticketCard.style.transform = 'translateY(-5px)';
+                    ticketCard.onmouseout = () => ticketCard.style.transform = 'translateY(0)';
+
+                    const overlay = document.createElement('div');
+                    overlay.style = 'background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0) 100%); padding: 1.5rem 1.2rem; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;';
+
+                    if (isTicketPending) {
+                        const pendingLabel = document.createElement('div');
+                        pendingLabel.style = 'background: var(--accent-fire); color: #fff; padding: 8px 16px; border-radius: 5px; font-weight: 800; text-transform: uppercase; margin-bottom: 0.8rem; box-shadow: 0 0 15px rgba(255,90,85,0.4); border: 2px solid #fff; font-size: 0.85rem;';
+                        pendingLabel.innerText = "Pendiente de Pago";
+                        overlay.appendChild(pendingLabel);
+
+                        const instr = document.createElement('p');
+                        instr.style = "font-size: 0.75rem; color: #ccc; margin-bottom: 1rem; line-height: 1.4;";
+                        instr.innerText = "Sube tu comprobante para activar y recibir tu código QR.";
+                        overlay.appendChild(instr);
+
+                        const payLink = document.createElement('button');
+                        payLink.style = 'background: #fff; border: none; color: #000; font-weight: bold; padding: 10px 15px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; margin-bottom: 0.8rem; width: 100%; text-transform: uppercase;';
+                        payLink.innerText = '💳 Continuar Pago';
+                        payLink.onclick = () => openPaymentModal(ticket.owner_email);
+                        payLink.onmouseover = () => payLink.style.background = '#eee';
+                        payLink.onmouseout = () => payLink.style.background = '#fff';
+                        overlay.appendChild(payLink);
+                    } else {
+                        const activeBadge = document.createElement('div');
+                        activeBadge.style = 'background: #28a745; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.8rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(40,167,69,0.4); border: 1px solid rgba(255,255,255,0.25); letter-spacing: 0.5px;';
+                        activeBadge.innerHTML = '<span>✓</span> Acceso Activo';
+                        overlay.appendChild(activeBadge);
+
+                        const qrBorder = document.createElement('div');
+                        qrBorder.style = 'background: #fff; padding: 8px; border-radius: 12px; display: inline-block; margin-bottom: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+                        const qrDiv = document.createElement('div');
+                        const qrId = `qr-sec-${ticket.id}`;
+                        qrDiv.id = qrId;
+                        qrBorder.appendChild(qrDiv);
+                        overlay.appendChild(qrBorder);
+
+                        const activeMsg = document.createElement('p');
+                        activeMsg.style = 'font-size: 0.75rem; color: #a8ffb2; margin-bottom: 0.8rem; font-weight: 600; text-shadow: 0 0 10px rgba(40,167,69,0.3);';
+                        activeMsg.innerText = 'Boleto listo para el día del evento';
+                        overlay.appendChild(activeMsg);
+
+                        setTimeout(() => {
+                            const container = document.getElementById(qrId);
+                            if (container) {
+                                new QRCode(container, {
+                                    text: ticket.id,
+                                    width: 120,
+                                    height: 120,
+                                    colorDark: "#050505",
+                                    colorLight: "#ffffff",
+                                    correctLevel: QRCode.CorrectLevel.H
+                                });
+                            }
+                        }, 50);
+                    }
+
+                    const owner = document.createElement('p');
+                    owner.innerHTML = `<span style="font-size: 0.7rem; color: #ccc; text-transform: uppercase;">Titular</span><br><strong style="font-size: 1rem; color: var(--accent-fire); text-transform: uppercase;">${ticket.owner_name}</strong>`;
+                    owner.style = 'line-height: 1.2; margin: 0;';
+                    overlay.appendChild(owner);
+
+                    ticketCard.appendChild(overlay);
+                    ticketsGrid.appendChild(ticketCard);
+                });
+
+            } catch (err) {
+                console.error("Excepción en fetchAndRenderTickets:", err);
+                ticketsGrid.innerHTML = `<p style="color: var(--accent-fire); text-align: center;">Error de red.</p>`;
+            }
+        }
+
+        // Genera un código único de 6 caracteres basado en el email del usuario
+        // Es siempre el mismo para el mismo email (determinista) — sin importar cuántos boletos compre
+        function generateUserCode(email) {
+            let hash = 5381;
+            for (let i = 0; i < email.length; i++) {
+                hash = ((hash << 5) + hash) ^ email.charCodeAt(i);
+                hash = hash & 0x7fffffff; // mantener positivo 31 bits
+            }
+            // Caracteres fáciles de leer (sin 0, O, 1, I, L para evitar confusiones)
+            const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            let code = 'DER-';
+            let num = hash;
+            for (let i = 0; i < 6; i++) {
+                code += chars[num % chars.length];
+                num = Math.floor(num / chars.length);
+            }
+            return code;
+        }
+
+        // Genera centavos únicos deterministas de 10 a 99 basados en el correo del usuario
+        function generateUserCents(email) {
+            let hash = 5381;
+            for (let i = 0; i < email.length; i++) {
+                hash = ((hash << 5) + hash) ^ email.charCodeAt(i);
+                hash = hash & 0x7fffffff;
+            }
+            return (hash % 90) + 10; // De 10 a 99
+        }
+
+        function copyUserCode() {
+            const code = document.getElementById('user-pay-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = '✅ Copiado';
+                setTimeout(() => btn.textContent = original, 2000);
+            }).catch(() => {
+                // Fallback para navegadores sin clipboard API
+                const el = document.createElement('textarea');
+                el.value = code;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            });
+        }
+
+        function copyCentsAmount() {
+            const amountText = document.getElementById('user-pay-cents-amount').textContent;
+            // Extraer solo la cantidad numérica (ej: 250.45 de $250.45 MXN)
+            const match = amountText.match(/\d+\.\d+/);
+            const amount = match ? match[0] : amountText;
+            
+            navigator.clipboard.writeText(amount).then(() => {
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = '✅ Copiado';
+                setTimeout(() => btn.textContent = original, 2000);
+            }).catch(() => {
+                const el = document.createElement('textarea');
+                el.value = amount;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            });
+        }
+
+        function openPaymentModal(email) {
+            const userCode = generateUserCode(email);
+            const cents = generateUserCents(email);
+            const centsAmountText = `$250.${cents} MXN`;
+
+            // Rellenar campos del modal
+            document.getElementById('user-pay-code').innerText = userCode;
+            document.getElementById('user-pay-cents-amount').innerText = centsAmountText;
+            
+            const whatsappMsg = encodeURIComponent(`🎟 *Pago de Boleto - Derramamiento*\n\n*Código de pago (SPEI):* ${userCode}\n*Monto de depósito (OXXO/Banco):* $250.${cents} MXN\n*Correo registrado:* ${email}\n\nAquí adjunto mi comprobante de pago.`);
+            document.getElementById('whatsapp-btn').href = `https://wa.me/522294734067?text=${whatsappMsg}`;
+            
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        // Cerrar modal al hacer clic afuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target === modal) {
+                closePaymentModal();
+            }
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
