@@ -603,6 +603,13 @@
                         }, 50);
                     }
 
+                    const ticketNum = document.createElement('p');
+                    const isPending = ticket.status === 'pending';
+                    const serialStr = isPending ? 'Pendiente' : (ticket.serial_number ? String(ticket.serial_number).padStart(4, '0') : 'Pendiente');
+                    ticketNum.innerHTML = `<span style="font-size: 0.75rem; color: var(--accent-teal); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Anton', sans-serif;">Boleto N° ${serialStr}</span>`;
+                    ticketNum.style = 'margin-bottom: 0.4rem; line-height: 1;';
+                    overlay.appendChild(ticketNum);
+
                     const owner = document.createElement('p');
                     owner.innerHTML = `<span style="font-size: 0.7rem; color: #ccc; text-transform: uppercase;">Titular</span><br><strong style="font-size: 1rem; color: var(--accent-fire); text-transform: uppercase;">${ticket.owner_name}</strong>`;
                     owner.style = 'line-height: 1.2; margin: 0;';

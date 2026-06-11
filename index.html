@@ -937,7 +937,7 @@
             </div>
         </div>
 
-        <a href="#comprar" class="cta-button" onclick="openModal(event)">Adquirir Entrada</a>
+        <a href="#comprar" id="btn-adquirir" class="cta-button" onclick="openModal(event)">Adquirir Entrada</a>
     </header>
 
     <section class="details-section container">
@@ -1648,6 +1648,19 @@
                 document.getElementById('tickets-left').textContent = left;
                 const percentage = (left / MAX_TICKETS) * 100;
                 document.getElementById('ticket-progress').style.width = percentage + '%';
+
+                const acquireBtn = document.getElementById('btn-adquirir');
+                if (acquireBtn) {
+                    if (left === 0) {
+                        acquireBtn.textContent = 'Agotado';
+                        acquireBtn.style.pointerEvents = 'none';
+                        acquireBtn.style.opacity = '0.5';
+                    } else {
+                        acquireBtn.textContent = 'Adquirir Entrada';
+                        acquireBtn.style.pointerEvents = 'auto';
+                        acquireBtn.style.opacity = '1';
+                    }
+                }
             } else {
                 console.error("Error al obtener boletos vendidos:", error);
             }
@@ -1938,6 +1951,13 @@
                     activeMsg.innerText = 'Boleto válido para el día del evento';
                     overlay.appendChild(activeMsg);
                 }
+
+                const ticketNum = document.createElement('p');
+                const isPending = ticket.status === 'pending';
+                const serialStr = isPending ? 'Pendiente' : (ticket.serial_number ? String(ticket.serial_number).padStart(4, '0') : 'Pendiente');
+                ticketNum.innerHTML = `<span style="font-size: 0.8rem; color: var(--accent-teal); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Anton', sans-serif;">Boleto N° ${serialStr}</span>`;
+                ticketNum.style = 'margin-bottom: 0.4rem; line-height: 1;';
+                overlay.appendChild(ticketNum);
 
                 const owner = document.createElement('p');
                 owner.innerHTML = `<span style="font-size: 0.75rem; color: #ccc; text-transform: uppercase;">Titular</span><br><strong style="font-size: 1.1rem; color: var(--accent-fire); text-transform: uppercase;">${ticket.owner_name}</strong>`;
