@@ -1638,25 +1638,25 @@
 
         async function updateTicketDisplay() {
             if (!dbClient) return;
-            const { count, error } = await dbClient
-                .from('tickets')
-                .select('*', { count: 'exact', head: true });
+            const { data: soldCount, error } = await dbClient.rpc('get_sold_tickets_count');
 
             if (!error) {
-                const sold = count || 0;
+                const sold = soldCount || 0;
                 let left = MAX_TICKETS - sold;
                 if (left < 0) left = 0;
 
                 document.getElementById('tickets-left').textContent = left;
                 const percentage = (left / MAX_TICKETS) * 100;
                 document.getElementById('ticket-progress').style.width = percentage + '%';
+            } else {
+                console.error("Error al obtener boletos vendidos:", error);
             }
         }
 
         // Escuchar cambios en base de datos en tiempo real para actualizar contador visual a todos los usuarios
         if (dbClient) {
             dbClient.channel('public:tickets')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'tickets' }, payload => {
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, payload => {
                     updateTicketDisplay();
                 })
                 .subscribe();
@@ -1724,12 +1724,13 @@
                 const initialStatus = 'pending';
 
                 // Validación rápida de límite
-                const { count, error: countError } = await dbClient.from('tickets').select('*', { count: 'exact', head: true });
+                const { data: soldCount, error: countError } = await dbClient.rpc('get_sold_tickets_count');
 
                 if (countError) {
                     throw new Error("Revisa tu BD: " + countError.message);
                 }
 
+                const count = soldCount || 0;
                 if (count + qty > MAX_TICKETS) {
                     errorDiv.textContent = "Lo sentimos, no hay suficientes boletos disponibles.";
                     errorDiv.style.display = 'block';
