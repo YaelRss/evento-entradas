@@ -638,7 +638,7 @@
 
                 const { error } = await dbClient
                     .from('tickets')
-                    .update({ status: 'available', owner_name: null, owner_email: null })
+                    .update({ status: 'available', owner_name: '', owner_email: '' })
                     .eq('status', 'pending')
                     .lt('created_at', expiryLimit.toISOString());
 
@@ -1079,7 +1079,7 @@
             try {
                 const { error } = await dbClient
                     .from('tickets')
-                    .update({ status: 'available', owner_name: null, owner_email: null })
+                    .update({ status: 'available', owner_name: '', owner_email: '' })
                     .in('id', ticketIds);
 
                 if (error) throw error;
