@@ -1808,36 +1808,82 @@
                     return;
                 }
 
-                // Preparar el array de boletos a insertar
-                const ticketsToInsert = [];
-                // El primer boleto es para el titular principal (comprador)
-                ticketsToInsert.push({ 
-                    owner_name: name, 
-                    owner_email: email, 
-                    used: false,
-                    status: initialStatus,
-                    payment_method: method
-                });
-                // Los boletos adicionales van con sus nombres individuales
-                for (let i = 0; i < qty - 1; i++) {
-                    ticketsToInsert.push({ 
-                        owner_name: additionalNames[i], 
-                        owner_email: email, // Comparten el mismo correo para confirmación centralizada
-                        used: false,
-                        status: initialStatus,
-                        payment_method: method
-                    });
-                }
-
-                // Insertar en Supabase
-                const { data, error } = await dbClient
+                // Buscar boletos reciclados ('available')
+                const { data: availableTickets, error: availError } = await dbClient
                     .from('tickets')
-                    .insert(ticketsToInsert)
-                    .select();
+                    .select('id, serial_number')
+                    .eq('status', 'available')
+                    .order('serial_number', { ascending: true })
+                    .limit(qty);
 
-                if (error) {
-                    throw new Error("Error insertando: " + error.message);
+                if (availError) {
+                    throw new Error("Error buscando boletos reciclados: " + availError.message);
                 }
+
+                const ticketsToUpdate = availableTickets || [];
+                const updateCount = ticketsToUpdate.length;
+                let allAssignedTickets = [];
+                let assignedCount = 0;
+
+                // Usar boletos disponibles (UPDATE)
+                if (updateCount > 0) {
+                    for (let i = 0; i < updateCount; i++) {
+                        const ticketId = ticketsToUpdate[i].id;
+                        const tName = (assignedCount === 0) ? name : additionalNames[assignedCount - 1];
+                        
+                        const { data: updatedTicket, error: upError } = await dbClient
+                            .from('tickets')
+                            .update({
+                                owner_name: tName,
+                                owner_email: email,
+                                status: initialStatus,
+                                payment_method: method,
+                                created_at: new Date().toISOString()
+                            })
+                            .eq('id', ticketId)
+                            .eq('status', 'available') // Control de concurrencia
+                            .select();
+                            
+                        if (upError) throw new Error("Error reciclando boleto: " + upError.message);
+                        
+                        if (updatedTicket && updatedTicket.length > 0) {
+                            allAssignedTickets.push(updatedTicket[0]);
+                            assignedCount++;
+                        }
+                    }
+                }
+
+                // Generar boletos nuevos (INSERT) para la diferencia
+                const remainingToInsert = qty - assignedCount;
+                if (remainingToInsert > 0) {
+                    const ticketsToInsert = [];
+                    for (let i = 0; i < remainingToInsert; i++) {
+                        const nameIndex = assignedCount + i;
+                        const tName = (nameIndex === 0) ? name : additionalNames[nameIndex - 1];
+                        
+                        ticketsToInsert.push({ 
+                            owner_name: tName, 
+                            owner_email: email, 
+                            used: false,
+                            status: initialStatus,
+                            payment_method: method
+                        });
+                    }
+
+                    const { data: insertedTickets, error: insError } = await dbClient
+                        .from('tickets')
+                        .insert(ticketsToInsert)
+                        .select();
+
+                    if (insError) {
+                        throw new Error("Error insertando boletos nuevos: " + insError.message);
+                    }
+                    if (insertedTickets) {
+                        allAssignedTickets = allAssignedTickets.concat(insertedTickets);
+                    }
+                }
+                
+                const data = allAssignedTickets;
 
                 if (!data || data.length === 0) {
                     throw new Error("No se devolvieron los boletos. Revisa las políticas RLS de Supabase.");

@@ -638,7 +638,7 @@
 
                 const { error } = await dbClient
                     .from('tickets')
-                    .delete()
+                    .update({ status: 'available', owner_name: null, owner_email: null })
                     .eq('status', 'pending')
                     .lt('created_at', expiryLimit.toISOString());
 
@@ -767,11 +767,13 @@
             renderLista();
         }
 
-        // ACTUALIZAR MÉTRICAS DEL EVENTO
         function actualizarMetricas() {
-            const total = allTickets.length;
-            const paid = allTickets.filter(t => t.status === 'paid').length;
-            const pending = total - paid;
+            // Filtrar boletos disponibles (no se deben contar como vendidos ni pendientes)
+            const activeTickets = allTickets.filter(t => t.status !== 'available');
+            
+            const total = activeTickets.length;
+            const paid = activeTickets.filter(t => t.status === 'paid').length;
+            const pending = activeTickets.filter(t => t.status === 'pending').length;
             const earnings = paid * 250;
 
             document.getElementById('stat-total').textContent = total;
@@ -1077,7 +1079,7 @@
             try {
                 const { error } = await dbClient
                     .from('tickets')
-                    .delete()
+                    .update({ status: 'available', owner_name: null, owner_email: null })
                     .in('id', ticketIds);
 
                 if (error) throw error;
