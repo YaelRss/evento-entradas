@@ -365,9 +365,12 @@
 
     <main class="container" style="flex-grow: 1; padding-bottom: 4rem;">
         <h2 class="section-title">🎟 Mis Boletos Adquiridos</h2>
-        <p style="color: #aaa; text-align: center; margin-bottom: 3rem; font-size: 1rem;">
+        <p style="color: #aaa; text-align: center; margin-bottom: 2rem; font-size: 1rem;">
             Aquí puedes ver el estado en tiempo real de tus accesos para el evento.
         </p>
+
+        <!-- Contenedor del aviso para boletos pendientes -->
+        <div id="pending-warning-container" style="display: none; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;"></div>
         
         <!-- Estado: cargando -->
         <div id="loading-indicator" style="text-align: center; margin-top: 3rem; color: var(--accent-teal);">
@@ -517,6 +520,23 @@
                         </div>
                     `;
                     return;
+                }
+
+                // Mostrar/ocultar aviso de boletos pendientes
+                const pendingWarningContainer = document.getElementById('pending-warning-container');
+                if (pendingWarningContainer) {
+                    const hasPending = data.some(t => t.status === 'pending');
+                    if (hasPending) {
+                        pendingWarningContainer.innerHTML = `
+                            <div style="background: rgba(255, 90, 85, 0.08); border-left: 4px solid var(--accent-fire); padding: 1.2rem; border-radius: 10px; font-size: 0.88rem; line-height: 1.5; color: #ccc; text-align: left; border-top: 1px solid rgba(255, 90, 85, 0.15); border-right: 1px solid rgba(255, 90, 85, 0.15); border-bottom: 1px solid rgba(255, 90, 85, 0.15); box-shadow: 0 4px 15px rgba(255, 90, 85, 0.1);">
+                                <strong style="color: var(--accent-fire); font-size: 0.95rem; display: block; margin-bottom: 0.4rem; font-family: 'Anton', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;">⚠️ Tienes Boletos Pendientes de Pago</strong>
+                                Tu reserva es temporal y vencerá automáticamente en <strong style="color: #fff;">24 horas</strong> a partir del registro. Recuerda realizar el depósito o transferencia y enviar tu comprobante para que activemos tus accesos QR.
+                            </div>
+                        `;
+                        pendingWarningContainer.style.display = 'block';
+                    } else {
+                        pendingWarningContainer.style.display = 'none';
+                    }
                 }
 
                 ticketsGrid.innerHTML = '';
