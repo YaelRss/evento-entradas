@@ -867,8 +867,13 @@
                 // Generar lista de asistentes
                 let attendeesHtml = '';
                 group.tickets.forEach(ticket => {
+                    let checkboxHtml = '';
+                    if (currentTab === 'pending') {
+                        checkboxHtml = `<input type="checkbox" class="ticket-checkbox" value="${ticket.id}" checked style="margin-right: 8px; width: 16px; height: 16px; accent-color: var(--accent-teal); cursor: pointer;" onchange="actualizarTotalCard(this)">`;
+                    }
                     attendeesHtml += `
                         <div class="attendee-item">
+                            ${checkboxHtml}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span class="attendee-name">${ticket.owner_name}</span>
                             <span style="font-size: 0.7rem; color: #666; margin-left: auto;">N° ${ticket.serial_number ? String(ticket.serial_number).padStart(4, '0') : 'Pendiente'}</span>
@@ -883,11 +888,11 @@
                         <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
                             <button class="action-btn" onclick="aprobarPago(this, '${group.email}', '${key}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                                Aprobar Pago
+                                Aprobar Selección
                             </button>
                             <button class="action-btn cancel" onclick="cancelarPeticion(this, '${group.email}', '${key}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
-                                Cancelar
+                                Cancelar Selección
                             </button>
                         </div>
                     `;
@@ -917,7 +922,7 @@
                         ${attendeesHtml}
                     </div>
                     <div class="group-footer">
-                        <div class="total-amount">Total: <span>$${total.toLocaleString('es-MX')}.00 MXN</span> <span style="font-size: 0.8rem; color: #888; font-weight: normal; margin-left: 5px;">(o $${totalWithCents.toFixed(2)} si fue depósito)</span></div>
+                        <div class="total-amount">${currentTab === 'pending' ? 'Total Seleccionado:' : 'Total:'} <span class="dynamic-total" data-cents="${cents}">$${total.toLocaleString('es-MX')}.00 MXN</span> <span class="dynamic-cents" style="font-size: 0.8rem; color: #888; font-weight: normal; margin-left: 5px;">(o $${totalWithCents.toFixed(2)} si fue depósito)</span></div>
                         ${buttonHtml}
                     </div>
                 `;
@@ -928,12 +933,42 @@
             });
         }
 
+        function actualizarTotalCard(checkbox) {
+            const card = checkbox.closest('.group-card');
+            const checkboxes = card.querySelectorAll('.ticket-checkbox:checked');
+            const qty = checkboxes.length;
+            const total = qty * 250;
+            
+            const totalSpan = card.querySelector('.dynamic-total');
+            const centsSpan = card.querySelector('.dynamic-cents');
+            
+            if (totalSpan && centsSpan) {
+                const cents = parseFloat(totalSpan.dataset.cents);
+                const totalWithCents = total + (cents / 100);
+                totalSpan.textContent = '$' + total.toLocaleString('es-MX') + '.00 MXN';
+                centsSpan.textContent = '(o $' + totalWithCents.toFixed(2) + ' si fue depósito)';
+            }
+        }
+
         // APROBAR PAGO
         async function aprobarPago(btn, email, groupKey) {
             if (!dbClient) return;
             const card = btn.closest('.group-card');
-            const tickets = JSON.parse(card.dataset.tickets);
-            const ticketIds = tickets.map(t => t.id);
+            
+            const checkboxes = card.querySelectorAll('.ticket-checkbox');
+            let ticketIds = [];
+            
+            if (checkboxes.length > 0) {
+                const checked = card.querySelectorAll('.ticket-checkbox:checked');
+                if (checked.length === 0) {
+                    alert('Selecciona al menos un boleto para aprobar.');
+                    return;
+                }
+                ticketIds = Array.from(checked).map(cb => cb.value);
+            } else {
+                const tickets = JSON.parse(card.dataset.tickets);
+                ticketIds = tickets.map(t => t.id);
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<span style="display:inline-block; border: 2px solid #fff; border-top: 2px solid transparent; border-radius:50%; width:12px; height:12px; animation: spin 0.8s linear infinite; margin-right: 6px;"></span> Aprobando...';
@@ -969,12 +1004,16 @@
 
                 actualizarMetricas();
                 renderLista();
+                alert(`¡${ticketIds.length} boleto(s) aprobado(s) correctamente!`);
 
             } catch (err) {
                 console.error("Error al aprobar pago:", err);
                 alert("Ocurrió un error al aprobar el pago: " + err.message);
                 btn.disabled = false;
-                btn.textContent = 'Aprobar Pago';
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    Aprobar Selección
+                `;
             }
         }
 
@@ -1013,12 +1052,24 @@
         async function cancelarPeticion(btn, email, groupKey) {
             if (!dbClient) return;
             
-            const confirmed = confirm(`¿Estás seguro de que deseas cancelar y eliminar esta solicitud de boletos para ${email}? Esta acción no se puede deshacer y liberará los cupos.`);
-            if (!confirmed) return;
-
             const card = btn.closest('.group-card');
-            const tickets = JSON.parse(card.dataset.tickets);
-            const ticketIds = tickets.map(t => t.id);
+            const checkboxes = card.querySelectorAll('.ticket-checkbox');
+            let ticketIds = [];
+            
+            if (checkboxes.length > 0) {
+                const checked = card.querySelectorAll('.ticket-checkbox:checked');
+                if (checked.length === 0) {
+                    alert('Selecciona al menos un boleto para cancelar.');
+                    return;
+                }
+                ticketIds = Array.from(checked).map(cb => cb.value);
+            } else {
+                const tickets = JSON.parse(card.dataset.tickets);
+                ticketIds = tickets.map(t => t.id);
+            }
+            
+            const confirmed = confirm(`¿Estás seguro de que deseas cancelar y eliminar ${ticketIds.length} boleto(s) para ${email}? Esta acción no se puede deshacer y liberará los cupos.`);
+            if (!confirmed) return;
 
             btn.disabled = true;
             btn.innerHTML = '<span style="display:inline-block; border: 2px solid #fff; border-top: 2px solid transparent; border-radius:50%; width:12px; height:12px; animation: spin 0.8s linear infinite; margin-right: 6px;"></span> Cancelando...';
@@ -1036,14 +1087,14 @@
 
                 actualizarMetricas();
                 renderLista();
-                alert('Solicitud cancelada y eliminada con éxito.');
+                alert(`${ticketIds.length} boleto(s) cancelado(s) y eliminado(s) con éxito.`);
             } catch (err) {
                 console.error("Error al cancelar la petición:", err);
                 alert("Ocurrió un error al cancelar la petición: " + err.message);
                 btn.disabled = false;
                 btn.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
-                    Cancelar
+                    Cancelar Selección
                 `;
             }
         }
