@@ -1735,177 +1735,129 @@
                 .subscribe();
         }
 
-        async function handlePurchase(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const errorDiv = document.getElementById('form-error');
-            errorDiv.style.display = 'none';
+       async function handlePurchase(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('form-error');
+    errorDiv.style.display = 'none';
 
-            if (!dbClient) {
-                errorDiv.textContent = "⚠ Sistema bloqueado. Desactiva los escudos de Brave o tu AdBlocker.";
+    if (!dbClient) {
+        errorDiv.textContent = "⚠ Sistema bloqueado. Desactiva los escudos de Brave o tu AdBlocker.";
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    try {
+        const { data: { session } } = await dbClient.auth.getSession();
+        if (!session) {
+            closeModal();
+            openAuthModal();
+            return;
+        }
+    } catch(err) {
+        console.error(err);
+        errorDiv.textContent = "Error validando tu sesión. Intenta de nuevo.";
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    const qty = parseInt(document.getElementById('quantity').value);
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const method = document.getElementById('paymentMethod').value;
+
+    if (!name || !email) {
+        errorDiv.textContent = "⚠ Por favor, completa tu nombre y correo.";
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    // Recolectar y validar nombres de asistentes adicionales si qty > 1
+    const additionalNames = [];
+    if (qty > 1) {
+        const inputs = document.querySelectorAll('.attendee-name-input');
+        for (let i = 0; i < inputs.length; i++) {
+            const val = inputs[i].value.trim();
+            if (!val) {
+                errorDiv.textContent = `⚠ Por favor, completa el nombre del Boleto #${i + 2}.`;
                 errorDiv.style.display = 'block';
                 return;
             }
+            additionalNames.push(val);
+        }
+    }
 
-            try {
-                const { data: { session } } = await dbClient.auth.getSession();
-                if (!session) {
-                    // Si no está logueado, le pedimos que lo haga antes de comprar
-                    closeModal();
-                    openAuthModal();
-                    return;
-                }
-            } catch(err) {
-                console.error(err);
-                errorDiv.textContent = "Error validando tu sesión. Intenta de nuevo.";
-                errorDiv.style.display = 'block';
-                return;
-            }
+    try {
+        btn.textContent = 'Procesando...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
 
-            const qty = parseInt(document.getElementById('quantity').value);
-            const name = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const method = document.getElementById('paymentMethod').value;
+        const initialStatus = 'pending';
 
-            if (!name || !email) {
-                errorDiv.textContent = "⚠ Por favor, completa tu nombre y correo.";
-                errorDiv.style.display = 'block';
-                return;
-            }
+        // 1. Buscar boletos disponibles estrictamente ordenados del más bajo al más alto
+        const { data: availableTickets, error: availError } = await dbClient
+            .from('tickets')
+            .select('id, serial_number')
+            .eq('status', 'available')
+            .order('serial_number', { ascending: true }) // Reutiliza los números más bajos primero
+            .limit(qty);
 
-            // Recolectar y validar nombres de asistentes adicionales si qty > 1
-            const additionalNames = [];
-            if (qty > 1) {
-                const inputs = document.querySelectorAll('.attendee-name-input');
-                for (let i = 0; i < inputs.length; i++) {
-                    const val = inputs[i].value.trim();
-                    if (!val) {
-                        errorDiv.textContent = `⚠ Por favor, completa el nombre del Boleto #${i + 2}.`;
-                        errorDiv.style.display = 'block';
-                        return;
-                    }
-                    additionalNames.push(val);
-                }
-            }
-
-            try {
-                btn.textContent = 'Procesando...';
-                btn.style.opacity = '0.7';
-                btn.disabled = true;
-
-                // Definir estado inicial: todos se crean como 'pending'
-                const initialStatus = 'pending';
-
-                // Validación rápida de límite
-                const { data: soldCount, error: countError } = await dbClient.rpc('get_sold_tickets_count');
-
-                if (countError) {
-                    throw new Error("Revisa tu BD: " + countError.message);
-                }
-
-                const count = soldCount || 0;
-                if (count + qty > MAX_TICKETS) {
-                    errorDiv.textContent = "Lo sentimos, no hay suficientes boletos disponibles.";
-                    errorDiv.style.display = 'block';
-                    resetButton(btn);
-                    return;
-                }
-
-                // Buscar boletos reciclados ('available')
-                const { data: availableTickets, error: availError } = await dbClient
-                    .from('tickets')
-                    .select('id, serial_number')
-                    .eq('status', 'available')
-                    .order('serial_number', { ascending: true })
-                    .limit(qty);
-
-                if (availError) {
-                    throw new Error("Error buscando boletos reciclados: " + availError.message);
-                }
-
-                const ticketsToUpdate = availableTickets || [];
-                const updateCount = ticketsToUpdate.length;
-                let allAssignedTickets = [];
-                let assignedCount = 0;
-
-                // Usar boletos disponibles (UPDATE)
-                if (updateCount > 0) {
-                    for (let i = 0; i < updateCount; i++) {
-                        const ticketId = ticketsToUpdate[i].id;
-                        const tName = (assignedCount === 0) ? name : additionalNames[assignedCount - 1];
-                        
-                        const { data: updatedTicket, error: upError } = await dbClient
-                            .from('tickets')
-                            .update({
-                                owner_name: tName,
-                                owner_email: email,
-                                status: initialStatus,
-                                payment_method: method,
-                                created_at: new Date().toISOString()
-                            })
-                            .eq('id', ticketId)
-                            .eq('status', 'available') // Control de concurrencia
-                            .select();
-                            
-                        if (upError) throw new Error("Error reciclando boleto: " + upError.message);
-                        
-                        if (updatedTicket && updatedTicket.length > 0) {
-                            allAssignedTickets.push(updatedTicket[0]);
-                            assignedCount++;
-                        }
-                    }
-                }
-
-                // Generar boletos nuevos (INSERT) para la diferencia
-                const remainingToInsert = qty - assignedCount;
-                if (remainingToInsert > 0) {
-                    const ticketsToInsert = [];
-                    for (let i = 0; i < remainingToInsert; i++) {
-                        const nameIndex = assignedCount + i;
-                        const tName = (nameIndex === 0) ? name : additionalNames[nameIndex - 1];
-                        
-                        ticketsToInsert.push({ 
-                            owner_name: tName, 
-                            owner_email: email, 
-                            used: false,
-                            status: initialStatus,
-                            payment_method: method
-                        });
-                    }
-
-                    const { data: insertedTickets, error: insError } = await dbClient
-                        .from('tickets')
-                        .insert(ticketsToInsert)
-                        .select();
-
-                    if (insError) {
-                        throw new Error("Error insertando boletos nuevos: " + insError.message);
-                    }
-                    if (insertedTickets) {
-                        allAssignedTickets = allAssignedTickets.concat(insertedTickets);
-                    }
-                }
-                
-                const data = allAssignedTickets;
-
-                if (!data || data.length === 0) {
-                    throw new Error("No se devolvieron los boletos. Revisa las políticas RLS de Supabase.");
-                }
-
-                // Generar la interfaz web inmediatamente
-                showQRTickets(data);
-
-                // Reiniciar el formulario
-                document.getElementById('purchaseForm').reset();
-                resetButton(btn);
-            } catch (err) {
-                console.error("Excepción en handlePurchase:", err);
-                errorDiv.textContent = "✖ ERROR: " + err.message;
-                errorDiv.style.display = 'block';
-                resetButton(btn);
-            }
+        if (availError) {
+            throw new Error("Error buscando boletos disponibles: " + availError.message);
         }
 
+        // CONTROL DE RANGO Y LÍMITE: Si no hay suficientes boletos pre-creados del 1 al 1200
+        if (!availableTickets || availableTickets.length < qty) {
+            errorDiv.textContent = "Lo sentimos, no hay suficientes boletos disponibles en el rango del 1 al 1200.";
+            errorDiv.style.display = 'block';
+            resetButton(btn);
+            return;
+        }
+
+        let allAssignedTickets = [];
+
+        // 2. Asignar los boletos usando exclusivamente UPDATE
+        for (let i = 0; i < qty; i++) {
+            const ticketId = availableTickets[i].id;
+            const tName = (i === 0) ? name : additionalNames[i - 1];
+            
+            const { data: updatedTicket, error: upError } = await dbClient
+                .from('tickets')
+                .update({
+                    owner_name: tName,
+                    owner_email: email,
+                    status: initialStatus,
+                    payment_method: method,
+                    created_at: new Date().toISOString() // Reinicia las 24 horas para el cron job
+                })
+                .eq('id', ticketId)
+                .eq('status', 'available') // Control de concurrencia para que no se dupliquen
+                .select();
+                
+            if (upError) throw new Error("Error al asignar tu boleto: " + upError.message);
+            
+            if (updatedTicket && updatedTicket.length > 0) {
+                allAssignedTickets.push(updatedTicket[0]);
+            } else {
+                // En caso de que otra persona ganara ese boleto exacto en el mismo milisegundo
+                throw new Error("El boleto se ocupó durante el proceso. Por favor, intenta de nuevo.");
+            }
+        }
+        
+        // Generar la interfaz web con los códigos QR asignados en automático
+        showQRTickets(allAssignedTickets);
+
+        // Reiniciar el formulario
+        document.getElementById('purchaseForm').reset();
+        resetButton(btn);
+    } catch (err) {
+        console.error("Excepción en handlePurchase:", err);
+        errorDiv.textContent = "✖ ERROR: " + err.message;
+        errorDiv.style.display = 'block';
+        resetButton(btn);
+    }
+}
+  
         function resetButton(btn) {
             btn.textContent = 'Finalizar Compra';
             btn.style.opacity = '1';
