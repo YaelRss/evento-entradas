@@ -549,6 +549,125 @@
             }
         }
 
+        /* Estilos Premium para Hospedaje */
+        .lodging-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .lodging-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .lodging-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-teal);
+            background: rgba(59, 139, 143, 0.06);
+            box-shadow: 0 10px 35px rgba(59, 139, 143, 0.15);
+        }
+
+        .lodging-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(59, 139, 143, 0.2);
+            border: 1px solid var(--accent-teal);
+            color: #5cc2c7;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lodging-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            padding-right: 70px; /* Evitar solapamiento con badge */
+        }
+
+        .lodging-desc {
+            color: #bbb;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .lodging-meta {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 0.8rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .lodging-meta strong {
+            color: #fff;
+        }
+
+        .lodging-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .lodging-btn {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        .maps-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ccc;
+        }
+
+        .maps-btn:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .book-btn {
+            background: var(--accent-teal);
+            border: 1px solid var(--accent-teal);
+            color: #fff;
+        }
+
+        .book-btn:hover {
+            background: #47a2a7;
+            border-color: #47a2a7;
+            box-shadow: 0 4px 12px rgba(59, 139, 143, 0.3);
+        }
+
         /* Modal simple para tickets */
         .modal {
             display: none;
@@ -1088,8 +1207,7 @@
                     <p>Próximamente disponible para descarga</p>
                 </div>
             </div>
-            <div class="resource-card" style="opacity: 0.65; cursor: not-allowed; pointer-events: none; position: relative; user-select: none;">
-                <div style="position: absolute; top: 10px; right: 15px; background: rgba(255, 90, 85, 0.2); border: 1px solid var(--accent-fire); color: var(--accent-fire); font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">En Mantenimiento</div>
+            <a href="#" class="resource-card" onclick="openLodgingModal(event)">
                 <div class="resource-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -1104,7 +1222,7 @@
                     <h4>Hospedaje</h4>
                     <p>Recomendaciones y opciones de estadía</p>
                 </div>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -1301,6 +1419,161 @@
                     </summary>
                     <p style="color: #ccc; font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.6;">Primero revisa tu bandeja de spam. Si no está ahí, escríbenos directamente usando el botón de asistencia de WhatsApp (esquina inferior derecha) proporcionando el correo con el que te registraste y buscaremos tus boletos inmediatamente.</p>
                 </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Hospedaje -->
+    <div class="modal" id="lodgingModal">
+        <div class="modal-content" style="max-width: 850px; width: 95%; max-height: 85vh; overflow-y: auto; text-align: left; padding: 2.5rem; border-color: var(--accent-teal);">
+            <span class="close-btn" onclick="closeLodgingModal()">&times;</span>
+            <h2 style="margin-bottom: 0.5rem; color: var(--accent-teal); font-family: 'Anton', sans-serif; letter-spacing: 1px; text-transform: uppercase; text-align: center;">Recomendaciones de Hospedaje</h2>
+            <p style="color: #aaa; font-size: 0.9rem; text-align: center; margin-bottom: 2rem;">Opciones recomendadas cerca de Salones Palazzio Videmar</p>
+            
+            <div class="lodging-grid">
+                <!-- Hotel 1 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">Holiday Inn Express Basílica</h3>
+                    <p class="lodging-desc">Incluye desayuno en la tarifa.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$2,658</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$3,614</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 14 mins caminando | 🚗 14 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/ef98ba2mX5rjJFtH8?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 2 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">City Express By Marriott</h3>
+                    <p class="lodging-desc">Servicio de calidad y habitaciones de corte ejecutivo.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$2,286</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 28 mins caminando | 🚗 13 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/obGvC4aKNeFLVofE7?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 3 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">Hotel MX Forum Buenavista</h3>
+                    <p class="lodging-desc">Incluye desayuno en la tarifa.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$1,556</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$1,923</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 40 mins caminando | 🚗 13 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/1Tv8ZHjrwoZf9EkbA?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 4 (Recomendado) -->
+                <div class="lodging-card">
+                    <div class="lodging-badge">Recomendado</div>
+                    <h3 class="lodging-title">Hotel MX Lagunilla</h3>
+                    <p class="lodging-desc">Incluye desayuno y barra libre de café y chocolate las 24 horas.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$1,500</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$1,700</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 28 mins caminando | 🚗 13 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/YAN5qoobnTNoUK6o8?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 5 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">Hotel MX Garibaldi</h3>
+                    <p class="lodging-desc">Incluye desayuno en la tarifa.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$1,577</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$2,197</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 28 mins caminando | 🚗 13 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/t4XEnv2za4PwRN239?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 6 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">Hotel Villa de Madrid</h3>
+                    <p class="lodging-desc">Excelente relación calidad-precio y tarifas muy accesibles.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$850</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$1,650</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 14 mins caminando | 🚗 14 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/Z2yncsLQ4i4kiLfM7?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hotel 7 -->
+                <div class="lodging-card">
+                    <h3 class="lodging-title" style="padding-right: 0;">Hotel Kali la Raza</h3>
+                    <p class="lodging-desc">Incluye desayuno en la tarifa.</p>
+                    <div class="lodging-meta">
+                        <span><strong>Tarifas por noche:</strong></span>
+                        <span style="color: #fff;">• 2 personas: <strong>$1,630</strong></span>
+                        <span style="color: #fff;">• 4 personas: <strong>$2,270</strong></span>
+                        <span style="margin-top: 0.3rem;"><strong>Distancia:</strong> 🚶 13 mins caminando | 🚗 14 mins en carro</span>
+                    </div>
+                    <div class="lodging-actions">
+                        <a href="https://maps.app.goo.gl/igveWJo3ASUMgjCz9?g_st=iw" target="_blank" rel="noopener" class="lodging-btn maps-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nota de transporte -->
+            <div style="background: rgba(255,90,85,0.05); border: 1px solid rgba(255,90,85,0.2); border-radius: 12px; padding: 1.2rem; margin-top: 2rem; display: flex; gap: 1rem; align-items: flex-start;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div style="font-size: 0.85rem; line-height: 1.5; color: #eee;">
+                    <strong style="color: var(--accent-fire); display: block; margin-bottom: 0.2rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">Nota Importante de Movilidad</strong>
+                    Para trasladarse de manera segura y cómoda entre los hoteles y los Salones Palazzio Videmar, recomendamos utilizar servicios de transporte privado por aplicación como <strong>Uber</strong> o <strong>DiDi</strong>, especialmente en los horarios nocturnos al finalizar las actividades.
+                </div>
+            </div>
+            
+            <!-- Buscadores -->
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <a href="https://www.google.com/maps/search/hoteles+cerca+de+Manuel+Gonzalez+71+Ex+Hipodromo+de+Peralvillo" target="_blank" rel="noopener" style="color: var(--accent-teal); text-decoration: none; font-size: 0.9rem; font-weight: bold; border-bottom: 1px dashed var(--accent-teal); transition: all 0.3s;" onmouseover="this.style.color='#fff'; this.style.borderColor='#fff'" onmouseout="this.style.color='var(--accent-teal)'; this.style.borderColor='var(--accent-teal)'">
+                    Buscar más opciones de hospedaje en Google Maps
+                </a>
             </div>
         </div>
     </div>
@@ -1682,6 +1955,18 @@
             if (faqModal) faqModal.style.display = 'none';
         }
 
+        // Funciones para el Modal de Hospedaje
+        const lodgingModal = document.getElementById('lodgingModal');
+
+        function openLodgingModal(e) {
+            if (e) e.preventDefault();
+            if (lodgingModal) lodgingModal.style.display = 'flex';
+        }
+
+        function closeLodgingModal() {
+            if (lodgingModal) lodgingModal.style.display = 'none';
+        }
+
         // Cerrar modal si se hace clic fuera del contenido
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -1693,6 +1978,17 @@
             }
             if (event.target == faqModal) {
                 faqModal.style.display = "none";
+            }
+            if (event.target == lodgingModal) {
+                lodgingModal.style.display = "none";
+            }
+            const authModal = document.getElementById('authModal');
+            if (event.target == authModal) {
+                authModal.style.display = "none";
+            }
+            const videoModal = document.getElementById('videoModal');
+            if (event.target == videoModal) {
+                closeVideoModal();
             }
         }
 
