@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /escaner.html
+
+Sitemap: https://jovenes.ipumexico.com/sitemap.xml
