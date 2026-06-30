@@ -754,6 +754,7 @@
             const { data, error } = await dbClient
                 .from('tickets')
                 .select('*')
+                .neq('status', 'available')
                 .order('created_at', { ascending: false });
 
             if (error) {
